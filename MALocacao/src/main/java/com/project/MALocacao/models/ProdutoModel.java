@@ -15,7 +15,7 @@ public class ProdutoModel implements Serializable {
     @Column(unique = true, length = 100)
     private String nome;
 
-    @Column(length = 30)
+    @Column(length = 50)
     private String setor;
 
     @Column(scale = 2)
