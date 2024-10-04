@@ -16,6 +16,10 @@ public class ProdutoDto {
     @NotNull(message = "Necessário inserir número de unidades corretamente")
     private Long numUnidades;
 
+    private String aplicacao;
+
+    private String fornecedor;
+
     public String getNome() {
         return nome;
     }
@@ -39,6 +43,18 @@ public class ProdutoDto {
     }
     public void setNumUnidades(Long numUnidades) {
         this.numUnidades = numUnidades;
+    }
+    public String getAplicacao() {
+        return aplicacao;
+    }
+    public void setAplicacao(String aplicacao) {
+        this.aplicacao = aplicacao;
+    }
+    public String getFornecedor() {
+        return fornecedor;
+    }
+    public void setFornecedor(String fornecedor) {
+        this.fornecedor = fornecedor;
     }
     
 }

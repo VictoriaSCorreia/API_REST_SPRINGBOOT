@@ -24,8 +24,11 @@ public class ProdutoModel implements Serializable {
     @Column()
     private Long numUnidades;
 
-    /*  @Column(nullable = true, length = 30)
-    private String fornecedor; */
+    @Column(length = 50)
+    private String aplicacao;
+
+    @Column(length = 30)
+    private String fornecedor;
 
     public Long getId() {
         return id;
@@ -57,14 +60,19 @@ public class ProdutoModel implements Serializable {
     public void setNumUnidades(Long numUnidades) {
         this.numUnidades = numUnidades;
     }
-    
-   /*  public String getFornecedor() {
+    public String getAplicacao() {
+        return aplicacao;
+    }
+    public void setAplicacao(String aplicacao) {
+        this.aplicacao = aplicacao;
+    }
+    public String getFornecedor() {
         return fornecedor;
     }
 
     public void setFornecedor(String fornecedor) {
         this.fornecedor = fornecedor;
-    } */
+    } 
    
 }
 

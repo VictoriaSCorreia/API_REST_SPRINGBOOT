@@ -21,11 +21,14 @@ public class SaidaModel implements Serializable {
     @Column(scale = 2)
     private BigDecimal valorTotal;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private ProdutoModel produto;
 
     @Column(length = 50)
     private String solicitante;
+
+    @Column(length = 50)
+    private String requisicao;
 
     @Column(length = 50)
     private String locacao;
@@ -77,7 +80,13 @@ public class SaidaModel implements Serializable {
     public void setSolicitante(String solicitante) {
         this.solicitante = solicitante;
     }
+    public String getRequisicao() {
+        return requisicao;
+    }
 
+    public void setRequisicao(String requisicao) {
+        this.requisicao = requisicao;
+    }
     public String getLocacao() {
         return locacao;
     }
@@ -85,6 +94,8 @@ public class SaidaModel implements Serializable {
     public void setLocacao(String locacao) {
         this.locacao = locacao;
     }
+
+    
 
 }
 

@@ -24,6 +24,8 @@ public class SaidaDto {
     @NotNull
     private String solicitante;
 
+    private String requisicao;
+
     @NotNull
     private String locacao;
 
@@ -66,13 +68,19 @@ public class SaidaDto {
     public void setSolicitante(String solicitante) {
         this.solicitante = solicitante;
     }
-
     public String getLocacao() {
         return locacao;
     }
 
     public void setLocacao(String locacao) {
         this.locacao = locacao;
+    }
+    public String getRequisicao() {
+        return requisicao;
+    }
+
+    public void setRequisicao(String requisicao) {
+        this.requisicao = requisicao;
     }
 
     

@@ -21,6 +21,8 @@ public class EntradaDto {
     @JsonIgnore
     private ProdutoModel produto;
 
+    private String notaFiscal;
+
     public LocalDateTime getData() {
         return data;
     }
@@ -52,5 +54,14 @@ public class EntradaDto {
     public void setProduto(ProdutoModel produto) {
         this.produto = produto;
     }
+    public String getNotaFiscal() {
+        return notaFiscal;
+    }
+
+    public void setNotaFiscal(String notaFiscal) {
+        this.notaFiscal = notaFiscal;
+    }
+    
+
 }
 

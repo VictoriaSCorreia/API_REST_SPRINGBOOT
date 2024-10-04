@@ -21,8 +21,11 @@ public class EntradaModel implements Serializable {
     @Column(scale = 2)
     private BigDecimal valorTotal;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private ProdutoModel produto;
+
+    @Column(length = 30)
+    private String notaFiscal;
 
     public Long getId() {
         return id;
@@ -63,5 +66,14 @@ public class EntradaModel implements Serializable {
     public void setProduto(ProdutoModel produto) {
         this.produto = produto;
     }
+
+    public String getNotaFiscal() {
+        return notaFiscal;
+    }
+
+    public void setNotaFiscal(String notaFiscal) {
+        this.notaFiscal = notaFiscal;
+    }
+    
 }
 
