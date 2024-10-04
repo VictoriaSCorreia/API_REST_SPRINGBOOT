@@ -6,5 +6,4 @@ import com.project.MALocacao.models.SaidaModel;
 
 @Repository
 public interface SaidaRepository extends JpaRepository<SaidaModel, Long> {
-    boolean existsByProdutoId(Long produtoId);
 }

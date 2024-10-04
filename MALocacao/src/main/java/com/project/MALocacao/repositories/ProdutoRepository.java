@@ -6,5 +6,6 @@ import com.project.MALocacao.models.ProdutoModel;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<ProdutoModel, Long> {
+    // Confere se o produto existe através de seu nome(Usado em ProdutoController)
     boolean existsByNome(String nome);
 }

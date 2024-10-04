@@ -21,16 +21,15 @@ public class EntradaModel implements Serializable {
     @Column(scale = 2)
     private BigDecimal valorTotal;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private ProdutoModel produto;
-
     @Column(length = 30)
     private String notaFiscal;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private ProdutoModel produto;
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -38,7 +37,6 @@ public class EntradaModel implements Serializable {
     public LocalDateTime getData() {
         return data;
     }
-
     public void setData(LocalDateTime data) {
         this.data = data;
     }
@@ -46,7 +44,6 @@ public class EntradaModel implements Serializable {
     public Long getQuantidade() {
         return quantidade;
     }
-
     public void setQuantidade(Long quantidade) {
         this.quantidade = quantidade;
     }
@@ -54,26 +51,22 @@ public class EntradaModel implements Serializable {
     public BigDecimal getValorTotal() {
         return valorTotal;
     }
-
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
-    }
-
-    public ProdutoModel getProduto() {
-        return produto;
-    }
-
-    public void setProduto(ProdutoModel produto) {
-        this.produto = produto;
     }
 
     public String getNotaFiscal() {
         return notaFiscal;
     }
-
     public void setNotaFiscal(String notaFiscal) {
         this.notaFiscal = notaFiscal;
     }
-    
+
+    public ProdutoModel getProduto() {
+        return produto;
+    }
+    public void setProduto(ProdutoModel produto) {
+        this.produto = produto;
+    } 
 }
 

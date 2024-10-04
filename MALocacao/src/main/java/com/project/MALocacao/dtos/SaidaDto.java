@@ -18,21 +18,19 @@ public class SaidaDto {
     @JsonIgnore
     private BigDecimal valorTotal;
 
-    @JsonIgnore
-    private ProdutoModel produto;
-
-    @NotNull
+    @NotNull(message = "Necessário inserir solicitante corretamente")
     private String solicitante;
 
     private String requisicao;
 
-    @NotNull
     private String locacao;
+
+    @JsonIgnore
+    private ProdutoModel produto;
 
     public LocalDateTime getData() {
         return data;
     }
-
     public void setData(LocalDateTime data) {
         this.data = data;
     }
@@ -40,7 +38,6 @@ public class SaidaDto {
     public Long getQuantidade() {
         return quantidade;
     }
-
     public void setQuantidade(Long quantidade) {
         this.quantidade = quantidade;
     }
@@ -48,41 +45,36 @@ public class SaidaDto {
     public BigDecimal getValorTotal() {
         return valorTotal;
     }
-
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
-    }
-
-    public ProdutoModel getProduto() {
-        return produto;
-    }
-
-    public void setProduto(ProdutoModel produto) {
-        this.produto = produto;
     }
 
     public String getSolicitante() {
         return solicitante;
     }
-
     public void setSolicitante(String solicitante) {
         this.solicitante = solicitante;
     }
+
     public String getLocacao() {
         return locacao;
     }
-
     public void setLocacao(String locacao) {
         this.locacao = locacao;
     }
+
     public String getRequisicao() {
         return requisicao;
     }
-
     public void setRequisicao(String requisicao) {
         this.requisicao = requisicao;
     }
 
-    
+    public ProdutoModel getProduto() {
+        return produto;
+    }
+    public void setProduto(ProdutoModel produto) {
+        this.produto = produto;
+    }
 }
 
