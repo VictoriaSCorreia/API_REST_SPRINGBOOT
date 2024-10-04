@@ -33,10 +33,11 @@ public class EntradaController {
 
     @PostMapping
     public ResponseEntity<Object> saveEntrada(@RequestBody @Valid EntradaDto entradaDto, @RequestParam(value = "produtoId") Long produtoId){
-        var entradaModel = new EntradaModel();
-        BeanUtils.copyProperties(entradaDto, entradaModel);;
+        var entrada = new EntradaModel();
+        BeanUtils.copyProperties(entradaDto, entrada);;
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(entradaService.createEntrada(entradaModel, produtoId));
+            // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
+            return ResponseEntity.status(HttpStatus.CREATED).body(entradaService.createEntrada(entrada, produtoId));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -74,23 +75,31 @@ public class EntradaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada.");
         }
     
-        EntradaModel entradaModel = entradaModelOptional.get();
-        ProdutoModel produto = entradaModel.getProduto(); 
+        
+        EntradaModel entrada = entradaModelOptional.get();
+        ProdutoModel produto = entrada.getProduto(); 
 
-        Long quantidadeAnterior = entradaModel.getQuantidade();
+        // Pega a quantidade anterior vinda na Entrada e a nova
+        Long quantidadeAnterior = entrada.getQuantidade();
         Long novaQuantidade = entradaDto.getQuantidade();
-    
-        entradaModel.setData(entradaDto.getData());
-        entradaModel.setQuantidade(novaQuantidade);
-    
+
+        /* Pega as informações do DTO que veio no corpo da requisição e altera 
+        a EntradaModel 
+        (semelhante ao BeanUtils.copyProperties(produtoDto, produtoModel) em Produto Controller) */
+        entrada.setData(entradaDto.getData());
+        entrada.setQuantidade(novaQuantidade);
+        entrada.setNotaFiscal(entradaDto.getNotaFiscal());
+
+        // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Entrada
         if (novaQuantidade > quantidadeAnterior) {
             produto.setNumUnidades(produto.getNumUnidades() + (novaQuantidade - quantidadeAnterior));
         } else if (novaQuantidade < quantidadeAnterior) {
             produto.setNumUnidades(produto.getNumUnidades() - (quantidadeAnterior - novaQuantidade));
         }
     
+        // Salva alterações
         produtoService.save(produto); 
-        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entradaModel));
+        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada));
     }
 }
 

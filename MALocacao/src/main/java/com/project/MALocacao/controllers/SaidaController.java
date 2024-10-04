@@ -33,10 +33,11 @@ public class SaidaController {
 
     @PostMapping
     public ResponseEntity<Object> saveSaida(@RequestBody @Valid SaidaDto saidaDto, @RequestParam(value = "produtoId") Long produtoId){
-        var saidaModel = new SaidaModel();
-        BeanUtils.copyProperties(saidaDto, saidaModel);
+        var saida = new SaidaModel();
+        BeanUtils.copyProperties(saidaDto, saida);
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(saidaService.createSaida(saidaModel, produtoId));
+            // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
+            return ResponseEntity.status(HttpStatus.CREATED).body(saidaService.createSaida(saida, produtoId));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -47,7 +48,6 @@ public class SaidaController {
         return ResponseEntity.status(HttpStatus.OK).body(saidaService.findAll(pageable));
     }
 
-    
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneSaida(@PathVariable(value = "id") Long id){
         Optional<SaidaModel> saidaModelOptional = saidaService.findById(id);
@@ -74,22 +74,32 @@ public class SaidaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saida não encontrada.");
         }
     
-        SaidaModel saidaModel = saidaModelOptional.get();
-        ProdutoModel produto = saidaModel.getProduto(); 
+        SaidaModel saida = saidaModelOptional.get();
+        ProdutoModel produto = saida.getProduto(); 
 
-        Long quantidadeAnterior = saidaModel.getQuantidade();
+        // Pega a quantidade anterior vinda na Saída e a nova
+        Long quantidadeAnterior = saida.getQuantidade();
         Long novaQuantidade = saidaDto.getQuantidade();
     
-        saidaModel.setData(saidaDto.getData());
-        saidaModel.setQuantidade(novaQuantidade);
+        /* Pega as informações do DTO que veio no corpo da requisição e altera 
+        a SaidaModel 
+        (semelhante ao BeanUtils.copyProperties(produtoDto, produtoModel) em Produto Controller) */
+        saida.setData(saidaDto.getData());
+        saida.setQuantidade(novaQuantidade);
+        saida.setSolicitante(saidaDto.getSolicitante());
+        saida.setRequisicao(saidaDto.getRequisicao());
+        saida.setLocacao(saidaDto.getLocacao());
     
+        // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Saida
         if (novaQuantidade > quantidadeAnterior) {
             produto.setNumUnidades(produto.getNumUnidades() + (novaQuantidade - quantidadeAnterior));
         } else if (novaQuantidade < quantidadeAnterior) {
             produto.setNumUnidades(produto.getNumUnidades() - (quantidadeAnterior - novaQuantidade));
         }
+
+        // Salva alterações
         produtoService.save(produto); 
-        return ResponseEntity.status(HttpStatus.OK).body(saidaService.save(saidaModel));
+        return ResponseEntity.status(HttpStatus.OK).body(saidaService.save(saida));
     }
 }
 

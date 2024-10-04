@@ -21,23 +21,26 @@ import java.util.Optional;
 @RequestMapping("/produto")
 public class ProdutoController {
 
-    
     final ProdutoService produtoService;
-    final EntradaService entradaService; // Adicione esta linha
+    final EntradaService entradaService; 
 
-    // Modifique o construtor para incluir EntradaService
     public ProdutoController(ProdutoService produtoService, EntradaService entradaService) {
         this.produtoService = produtoService;
-        this.entradaService = entradaService; // Adicione esta linha
+        this.entradaService = entradaService;
     }
 
     @PostMapping
     public ResponseEntity<Object> saveProduto(@RequestBody @Valid ProdutoDto produtoDto){
+        // Confere se o produto já existe pelo nome(unique)
         if(produtoService.existsByNome(produtoDto.getNome())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse tipo de produto já existe!");
         }
+
+        // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         var produtoModel = new ProdutoModel();
-        BeanUtils.copyProperties(produtoDto, produtoModel);;
+        BeanUtils.copyProperties(produtoDto, produtoModel);
+
+        // Salva
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produtoModel));
     }
 
@@ -77,17 +80,24 @@ public class ProdutoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado.");
         }
         if (produtoService.existsByNome(produtoDto.getNome()) && !produtoModelOptional.get().getNome().equals(produtoDto.getNome())) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse nome de produto já está em uso por outro produto.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse nome de produto já está em uso por outro produto.");
         }
         
-        ProdutoModel produtoModel1 = produtoModelOptional.get();
-        Long nUnidadesAnterior = produtoModel1.getNumUnidades();
+        // Guarda o valor de unidades antigo
+        ProdutoModel produtoModel = produtoModelOptional.get();
+        Long nUnidadesAnterior = produtoModel.getNumUnidades();
 
-        var produtoModel = new ProdutoModel();
+        // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         BeanUtils.copyProperties(produtoDto, produtoModel);
 
-        produtoModel.setId(produtoModelOptional.get().getId());
+        /* seta o valor antigo de unidadades pois esse valor só 
+        pode ser alterado através da Entrada (+) e Saída (-) */
         produtoModel.setNumUnidades(nUnidadesAnterior);
+
+        // Precisa setar o ID manualmente pois o DTO não possui esse campo(ele é gerado automaticamente no Model)
+        produtoModel.setId(produtoModelOptional.get().getId());
+
+        // Salva
         return ResponseEntity.status(HttpStatus.OK).body(produtoService.save(produtoModel));
     }
 
