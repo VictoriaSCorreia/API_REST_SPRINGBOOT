@@ -12,9 +12,8 @@ public class MaLocacaoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MaLocacaoApplication.class, args);
 	}
-
 	@GetMapping("/index")
 	public String index(){
 		return "Olá Mundo!";
-	}
+	} 
 }

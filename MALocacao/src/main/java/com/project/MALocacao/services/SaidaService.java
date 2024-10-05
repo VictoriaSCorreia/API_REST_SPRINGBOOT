@@ -45,7 +45,7 @@ public class SaidaService {
         ProdutoModel produto = produtoOptional.get();
 
         /* Confere se a (quantidade) a ser retirada é maior que o estoque (NumUnidades) ou se o 
-        valor dela é maior ou igual a zero (inválida)*/
+        valor dela é menor ou igual a zero (inválida)*/
         if (saidaModel.getQuantidade() > produto.getNumUnidades() || saidaModel.getQuantidade() <= 0) {
             throw new RuntimeException("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
         }

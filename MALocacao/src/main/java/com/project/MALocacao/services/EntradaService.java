@@ -47,6 +47,11 @@ public class EntradaService {
             valor e não deve mais ser nulo. */
         ProdutoModel produto = produtoOptional.get();
     
+        /* Confere se o valor dela é menor ou igual a zero (inválida)*/
+        if (entradaModel.getQuantidade() <= 0) {
+            throw new RuntimeException("Quantidade solicitada inválida.");
+        }
+
         // altera o (número de unidades) no produto adicionando a (quantidade) vinda na Entrada
         produto.setNumUnidades(produto.getNumUnidades() + entradaModel.getQuantidade());
 

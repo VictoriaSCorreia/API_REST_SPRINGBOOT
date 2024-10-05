@@ -82,17 +82,14 @@ public class ProdutoController {
         if (produtoService.existsByNome(produtoDto.getNome()) && !produtoModelOptional.get().getNome().equals(produtoDto.getNome())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse nome de produto já está em uso por outro produto.");
         }
-        
-        // Guarda o valor de unidades antigo
-        ProdutoModel produtoModel = produtoModelOptional.get();
-        Long nUnidadesAnterior = produtoModel.getNumUnidades();
+        if (produtoDto.getNumUnidades() != produtoModelOptional.get().getNumUnidades()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de unidades em estoque só pode ser alterado através da Entrada e Saída.");
+        }
+
+        var produtoModel = produtoModelOptional.get();
 
         // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         BeanUtils.copyProperties(produtoDto, produtoModel);
-
-        /* seta o valor antigo de unidadades pois esse valor só 
-        pode ser alterado através da Entrada (+) e Saída (-) */
-        produtoModel.setNumUnidades(nUnidadesAnterior);
 
         // Precisa setar o ID manualmente pois o DTO não possui esse campo(ele é gerado automaticamente no Model)
         produtoModel.setId(produtoModelOptional.get().getId());
