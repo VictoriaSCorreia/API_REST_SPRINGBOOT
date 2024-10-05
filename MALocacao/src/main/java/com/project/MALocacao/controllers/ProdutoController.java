@@ -41,7 +41,12 @@ public class ProdutoController {
         BeanUtils.copyProperties(produtoDto, produtoModel);
 
         // Salva
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produtoModel));
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produtoModel));
+        }
+        catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Valor deve ser maior que 0");
+        }
     }
 
     @GetMapping
@@ -95,7 +100,12 @@ public class ProdutoController {
         produtoModel.setId(produtoModelOptional.get().getId());
 
         // Salva
-        return ResponseEntity.status(HttpStatus.OK).body(produtoService.save(produtoModel));
+         try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produtoModel));
+        }
+        catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Valor deve ser maior que 0");
+        }
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,9 @@ public class ProdutoService {
 
     @Transactional
     public ProdutoModel save(ProdutoModel produtoModel) {
+        if (produtoModel.getValorUnidade().compareTo(BigDecimal.ZERO) <= 0){
+            throw new RuntimeException();
+        }
         // Método já embutido no JPA
         return produtoRepository.save(produtoModel);
     }
@@ -38,7 +43,6 @@ public class ProdutoService {
         // Método já embutido no JPA
         return produtoRepository.findById(id);
     }
-
     @Transactional
     public void delete(ProdutoModel produtoModel) {
         // Método já embutido no JPA
