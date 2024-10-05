@@ -74,11 +74,14 @@ public class EntradaController {
         if (!entradaModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada.");
         }
-    
-        
+
         EntradaModel entrada = entradaModelOptional.get();
         ProdutoModel produto = entrada.getProduto(); 
 
+        if (entradaDto.getQuantidade() < 0) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
+        }
+        
         // Pega a quantidade anterior vinda na Entrada e a nova
         Long quantidadeAnterior = entrada.getQuantidade();
         Long novaQuantidade = entradaDto.getQuantidade();

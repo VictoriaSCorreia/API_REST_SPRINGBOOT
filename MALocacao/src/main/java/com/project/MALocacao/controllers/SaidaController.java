@@ -73,9 +73,13 @@ public class SaidaController {
         if (!saidaModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saida não encontrada.");
         }
-    
+
         SaidaModel saida = saidaModelOptional.get();
         ProdutoModel produto = saida.getProduto(); 
+
+        if (saidaDto.getQuantidade() > produto.getNumUnidades() || saidaDto.getQuantidade() < 0){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
+        }
 
         // Pega a quantidade anterior vinda na Saída e a nova
         Long quantidadeAnterior = saida.getQuantidade();
@@ -92,9 +96,9 @@ public class SaidaController {
     
         // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Saida
         if (novaQuantidade > quantidadeAnterior) {
-            produto.setNumUnidades(produto.getNumUnidades() + (novaQuantidade - quantidadeAnterior));
+            produto.setNumUnidades(produto.getNumUnidades() - (novaQuantidade - quantidadeAnterior));
         } else if (novaQuantidade < quantidadeAnterior) {
-            produto.setNumUnidades(produto.getNumUnidades() - (quantidadeAnterior - novaQuantidade));
+            produto.setNumUnidades(produto.getNumUnidades() + (quantidadeAnterior - novaQuantidade));
         }
 
         // Salva alterações

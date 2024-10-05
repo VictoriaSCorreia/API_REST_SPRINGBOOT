@@ -35,6 +35,9 @@ public class ProdutoController {
         if(produtoService.existsByNome(produtoDto.getNome())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse tipo de produto já existe!");
         }
+        if (produtoDto.getNumUnidades() < 0) {            
+             return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de unidades não pode ser negativo!");         
+        }
 
         // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         var produtoModel = new ProdutoModel();
