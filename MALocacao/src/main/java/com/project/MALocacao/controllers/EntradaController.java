@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -102,7 +104,21 @@ public class EntradaController {
     
         // Salva alterações
         produtoService.save(produto); 
-        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada));
+        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada, produto.getId()));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoEntradas> getProdutoEntradas(@PathVariable(value = "produtoId") Long produtoId){
+        Optional<ProdutoModel> entradaModelOptional = produtoService.findById(produtoId);
+        if (!entradaModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        ProdutoEntradas produtoEntradas = entradaService.getProdutoEntradas(produtoId);
+        return ResponseEntity.status(HttpStatus.OK).body(produtoEntradas);
+    }
+
+
 }
+
+
 

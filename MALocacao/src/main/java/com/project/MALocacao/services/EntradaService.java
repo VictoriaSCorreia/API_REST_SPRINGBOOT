@@ -1,5 +1,6 @@
 package com.project.MALocacao.services;
 
+import com.project.MALocacao.controllers.ProdutoEntradas;
 import com.project.MALocacao.models.EntradaModel;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.EntradaRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,12 +26,12 @@ public class EntradaService {
     }
 
     @Transactional
-    public EntradaModel save(EntradaModel entradaModel) {
+    public EntradaModel save(EntradaModel entradaModel, Long produtoId) {
         /*  Pega a (quantidade de unidades) que foi dada no corpo da Entrada e 
         multiplica pelo (valor unitário) do (Produto) associado para setar o (valorTotal) */
         entradaModel.setValorTotal(BigDecimal.valueOf(entradaModel.getQuantidade()).multiply(entradaModel.getProduto().getValorUnidade()));
-        
         // Método já embutido no JPA
+
         return entradaRepository.save(entradaModel);
     }
 
@@ -62,7 +64,7 @@ public class EntradaService {
         entradaModel.setProduto(produto);
 
         // Salva a Entrada
-        return save(entradaModel);
+        return save(entradaModel, produtoId);
     }
 
     // Método já embutido no JPA
@@ -84,6 +86,11 @@ public class EntradaService {
     @Transactional
     public void delete(EntradaModel entradaModel) {
         entradaRepository.delete(entradaModel);
+    }
+
+    public ProdutoEntradas getProdutoEntradas(Long produtoId) {
+        var entradas = entradaRepository.getEntradasByProdutoId(produtoId);
+        return new ProdutoEntradas(produtoId, List.copyOf(entradas));
     }
 }
 

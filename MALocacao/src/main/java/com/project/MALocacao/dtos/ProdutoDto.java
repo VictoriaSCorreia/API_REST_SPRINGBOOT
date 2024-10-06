@@ -14,7 +14,7 @@ public class ProdutoDto {
     private BigDecimal valorUnidade;
 
     @NotNull(message = "Necessário inserir número de unidades corretamente")
-    private Long numUnidades;
+    private Long numUnidades = 0L;
 
     private String aplicacao;
 

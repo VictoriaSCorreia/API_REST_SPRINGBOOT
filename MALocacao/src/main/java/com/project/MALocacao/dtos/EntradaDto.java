@@ -3,6 +3,8 @@ package com.project.MALocacao.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.springframework.cglib.core.Local;
+
 import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +12,7 @@ import com.project.MALocacao.models.ProdutoModel;
 
 public class EntradaDto {
     @NotNull(message = "Necessário inserir data corretamente")
-    private LocalDateTime data;
+    private LocalDateTime data = LocalDateTime.now();
 
     @NotNull(message = "Necessário inserir quantidade corretamente")
     private Long quantidade;
