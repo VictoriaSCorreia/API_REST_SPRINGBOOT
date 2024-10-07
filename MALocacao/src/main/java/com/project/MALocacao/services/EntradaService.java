@@ -93,5 +93,3 @@ public class EntradaService {
         return new ProdutoEntradas(produtoId, List.copyOf(entradas));
     }
 }
-
-

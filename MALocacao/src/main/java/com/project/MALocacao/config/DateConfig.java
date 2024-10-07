@@ -1,4 +1,4 @@
-package com.project.MALocacao.configs;
+package com.project.MALocacao.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +22,7 @@ public class DateConfig {
         JavaTimeModule module = new JavaTimeModule();
         module.addSerializer(LOCAL_DATETIME_SERIALIZER);
         return new ObjectMapper()
-                .registerModule(module);
+          .registerModule(module);
     }
 
 }
