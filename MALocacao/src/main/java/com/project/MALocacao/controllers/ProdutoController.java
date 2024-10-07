@@ -111,5 +111,14 @@ public class ProdutoController {
         }
     }
 
+    @GetMapping("/{produtoId}/entradas")
+    public ResponseEntity<ProdutoEntradas> getProdutoEntradas(@PathVariable(value = "produtoId") Long produtoId) {
+        return produtoService.findById(produtoId)
+          .map(produto -> {
+              ProdutoEntradas produtoEntradas = entradaService.getProdutoEntradas(produtoId);
+              return ResponseEntity.ok(produtoEntradas);
+          })
+          .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 }
 

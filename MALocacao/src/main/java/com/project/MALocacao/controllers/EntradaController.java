@@ -34,9 +34,10 @@ public class EntradaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveEntrada(@RequestBody @Valid EntradaDto entradaDto, @RequestParam(value = "produtoId") Long produtoId){
+    public ResponseEntity<Object> saveEntrada(@RequestBody @Valid EntradaDto entradaDto, @RequestParam(value = "produtoId") Long produtoId) {
         var entrada = new EntradaModel();
-        BeanUtils.copyProperties(entradaDto, entrada);;
+        BeanUtils.copyProperties(entradaDto, entrada);
+        ;
         try {
             // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
             return ResponseEntity.status(HttpStatus.CREATED).body(entradaService.createEntrada(entrada, produtoId));
@@ -46,22 +47,19 @@ public class EntradaController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EntradaModel>> getAllEntradas(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<Page<EntradaModel>> getAllEntradas(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(entradaService.findAll(pageable));
     }
 
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getOneEntrada(@PathVariable(value = "id") Long id){
+    public ResponseEntity<Object> getOneEntrada(@PathVariable(value = "id") Long id) {
         Optional<EntradaModel> entradaModelOptional = entradaService.findById(id);
-        if (!entradaModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(entradaModelOptional.get());
+        return entradaModelOptional.<ResponseEntity<Object>>map(entradaModel -> ResponseEntity.status(HttpStatus.OK).body(entradaModel)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada."));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteEntrada(@PathVariable(value = "id") Long id){
+    public ResponseEntity<Object> deleteEntrada(@PathVariable(value = "id") Long id) {
         Optional<EntradaModel> entradaModelOptional = entradaService.findById(id);
         if (!entradaModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada.");
@@ -69,6 +67,7 @@ public class EntradaController {
         entradaService.delete(entradaModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Entrada deletada.");
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEntrada(@PathVariable(value = "id") Long id,
                                                 @RequestBody @Valid EntradaDto entradaDto) {
@@ -78,12 +77,12 @@ public class EntradaController {
         }
 
         EntradaModel entrada = entradaModelOptional.get();
-        ProdutoModel produto = entrada.getProduto(); 
+        ProdutoModel produto = entrada.getProduto();
 
         if (entradaDto.getQuantidade() < 0) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
         }
-        
+
         // Pega a quantidade anterior vinda na Entrada e a nova
         Long quantidadeAnterior = entrada.getQuantidade();
         Long novaQuantidade = entradaDto.getQuantidade();
@@ -101,23 +100,11 @@ public class EntradaController {
         } else if (novaQuantidade < quantidadeAnterior) {
             produto.setNumUnidades(produto.getNumUnidades() - (quantidadeAnterior - novaQuantidade));
         }
-    
+
         // Salva alterações
-        produtoService.save(produto); 
+        produtoService.save(produto);
         return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada, produto.getId()));
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ProdutoEntradas> getProdutoEntradas(@PathVariable(value = "produtoId") Long produtoId){
-        Optional<ProdutoModel> entradaModelOptional = produtoService.findById(produtoId);
-        if (!entradaModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        ProdutoEntradas produtoEntradas = entradaService.getProdutoEntradas(produtoId);
-        return ResponseEntity.status(HttpStatus.OK).body(produtoEntradas);
-    }
-
-
 }
 
 
