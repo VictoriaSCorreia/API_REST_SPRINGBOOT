@@ -80,6 +80,14 @@ public class EntradaService {
         return entradaRepository.existsByProdutoId(produtoId);
     }
 
+    public boolean existsById(Long id) {
+        return entradaRepository.existsById(id);
+    }
+
+    public void deleteById(Long id) {
+        entradaRepository.deleteById(id);
+    }
+
     private void validarQuantidade(Long quantidade) {
         if (quantidade <= 0) {
             throw new QuantidadeInvalidaException();

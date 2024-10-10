@@ -11,7 +11,7 @@ import com.project.MALocacao.models.EntradaModel;
 public interface EntradaRepository extends JpaRepository<EntradaModel, Long> {
     // confere se a Entrada existe através do id do produto associado à ela (usado em ProdutoController)
     boolean existsByProdutoId(Long produtoId);
-
+    boolean existsById(Long id);
     // @Query("SELECT e FROM Entrada e JOIN e.produto p WHERE p.id = :produtoId")
     Set<EntradaModel> getEntradasByProdutoId(@Param("produtoId") Long produtoId);
 }
