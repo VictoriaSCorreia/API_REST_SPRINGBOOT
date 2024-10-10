@@ -1,6 +1,7 @@
 package com.project.MALocacao.controllers;
 
 import com.project.MALocacao.dtos.EntradaDto;
+import com.project.MALocacao.exception.QuantidadeInvalidaException;
 import com.project.MALocacao.models.EntradaModel;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.services.EntradaService;
@@ -53,12 +54,9 @@ public class EntradaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteEntrada(@PathVariable Long id) {
-        if (entradaService.existsById(id)) {
-            entradaService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada.");
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body("Entrada deletada.");
-        }
+        entradaService.validarEntradaExiste(id);
+        entradaService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Entrada deletada.");  
     }
 
     /* @DeleteMapping("/{id}")
@@ -66,48 +64,18 @@ public class EntradaController {
         if (entradaService.existsById(id)) {
             entradaService.deleteById(id);
             return ResponseEntity.noContent().build();
-        } else {
+        }
         return ResponseEntity.notFound().build();
         }
     } */
 
-
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEntrada(@PathVariable(value = "id") Long id,
                                                 @RequestBody @Valid EntradaDto entradaDto) {
-        Optional<EntradaModel> entradaModelOptional = entradaService.findById(id);
-        if (!entradaModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada.");
-        }
 
-        EntradaModel entrada = entradaModelOptional.get();
-        ProdutoModel produto = entrada.getProduto();
-
-        if (entradaDto.getQuantidade() < 0) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
-        }
-
-        // Pega a quantidade anterior vinda na Entrada e a nova
-        Long quantidadeAnterior = entrada.getQuantidade();
-        Long novaQuantidade = entradaDto.getQuantidade();
-
-        /* Pega as informações do DTO que veio no corpo da requisição e altera 
-        a EntradaModel 
-        (semelhante ao BeanUtils.copyProperties(produtoDto, produtoModel) em Produto Controller) */
-        entrada.setData(entradaDto.getData());
-        entrada.setQuantidade(novaQuantidade);
-        entrada.setNotaFiscal(entradaDto.getNotaFiscal());
-
-        // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Entrada
-        if (novaQuantidade > quantidadeAnterior) {
-            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + (novaQuantidade - quantidadeAnterior));
-        } else if (novaQuantidade < quantidadeAnterior) {
-            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - (quantidadeAnterior - novaQuantidade));
-        }
-
-        // Salva alterações
-        produtoService.save(produto);
-        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada));
+        entradaService.validarEntradaExiste(id);
+        entradaService.validarQuantidade(entradaDto.getQuantidade());
+        return ResponseEntity.status(HttpStatus.OK).body(entradaService.updateEntrada(id, entradaDto));
     }
 }
 
