@@ -26,12 +26,12 @@ public class EntradaService {
     }
 
     @Transactional
-    public EntradaModel save(EntradaModel entradaModel, Long produtoId) {
+    public EntradaModel save(EntradaModel entradaModel) {
         /*  Pega a (quantidade de unidades) que foi dada no corpo da Entrada e 
         multiplica pelo (valor unitário) do (Produto) associado para setar o (valorTotal) */
         entradaModel.setValorTotal(BigDecimal.valueOf(entradaModel.getQuantidade()).multiply(entradaModel.getProduto().getValorUnidade()));
+        
         // Método já embutido no JPA
-
         return entradaRepository.save(entradaModel);
     }
 
@@ -44,18 +44,17 @@ public class EntradaService {
         if (!produtoOptional.isPresent()) {
             throw new RuntimeException("Produto não encontrado com o ID: " + produtoId);
         }
-
-         /* O valor foi retirado do Optional através do método get(), assumindo que o Optional contém um 
-            valor e não deve mais ser nulo. */
-        ProdutoModel produto = produtoOptional.get();
-    
         /* Confere se o valor dela é menor ou igual a zero (inválida)*/
         if (entradaModel.getQuantidade() <= 0) {
             throw new RuntimeException("Quantidade solicitada inválida.");
         }
 
+         /* O valor foi retirado do Optional através do método get(), assumindo que o Optional contém um 
+            valor e não deve mais ser nulo. */
+        ProdutoModel produto = produtoOptional.get();
+    
         // altera o (número de unidades) no produto adicionando a (quantidade) vinda na Entrada
-        produto.setNumUnidades(produto.getNumUnidades() + entradaModel.getQuantidade());
+        produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + entradaModel.getQuantidade());
 
         // Salva as alterações feitas no Produto
         produtoService.save(produto);
@@ -64,7 +63,7 @@ public class EntradaService {
         entradaModel.setProduto(produto);
 
         // Salva a Entrada
-        return save(entradaModel, produtoId);
+        return save(entradaModel);
     }
 
     // Método já embutido no JPA

@@ -36,7 +36,6 @@ public class EntradaController {
     public ResponseEntity<Object> saveEntrada(@RequestBody @Valid EntradaDto entradaDto, @RequestParam(value = "produtoId") Long produtoId) {
         var entrada = new EntradaModel();
         BeanUtils.copyProperties(entradaDto, entrada);
-        ;
         try {
             // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
             return ResponseEntity.status(HttpStatus.CREATED).body(entradaService.createEntrada(entrada, produtoId));
@@ -95,14 +94,14 @@ public class EntradaController {
 
         // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Entrada
         if (novaQuantidade > quantidadeAnterior) {
-            produto.setNumUnidades(produto.getNumUnidades() + (novaQuantidade - quantidadeAnterior));
+            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + (novaQuantidade - quantidadeAnterior));
         } else if (novaQuantidade < quantidadeAnterior) {
-            produto.setNumUnidades(produto.getNumUnidades() - (quantidadeAnterior - novaQuantidade));
+            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - (quantidadeAnterior - novaQuantidade));
         }
 
         // Salva alterações
         produtoService.save(produto);
-        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada, produto.getId()));
+        return ResponseEntity.status(HttpStatus.OK).body(entradaService.save(entrada));
     }
 }
 

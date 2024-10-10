@@ -22,7 +22,7 @@ public class ProdutoModel implements Serializable {
     private BigDecimal valorUnidade;
 
     @Column()
-    private Long numUnidades;
+    private Long quantidadeEmEstoque;
 
     @Column(length = 50)
     private String aplicacao;
@@ -58,11 +58,11 @@ public class ProdutoModel implements Serializable {
         this.valorUnidade = valorUnidade;
     }
 
-    public Long getNumUnidades() {
-        return numUnidades;
+    public Long getQuantidadeEmEstoque() {
+        return quantidadeEmEstoque;
     }
-    public void setNumUnidades(Long numUnidades) {
-        this.numUnidades = numUnidades;
+    public void setQuantidadeEmEstoque(Long quantidadeEmEstoque) {
+        this.quantidadeEmEstoque = quantidadeEmEstoque;
     }
 
     public String getAplicacao() {

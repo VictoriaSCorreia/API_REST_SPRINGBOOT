@@ -14,7 +14,7 @@ public class ProdutoDto {
     private BigDecimal valorUnidade;
 
     @NotNull(message = "Necessário inserir número de unidades corretamente")
-    private Long numUnidades; //  = 0L
+    private Long quantidadeEmEstoque; //  = 0L
 
     private String aplicacao;
 
@@ -41,11 +41,11 @@ public class ProdutoDto {
         this.valorUnidade = valorUnidade;
     }
 
-    public Long getNumUnidades() {
-        return numUnidades;
+    public Long getQuantidadeEmEstoque() {
+        return quantidadeEmEstoque;
     }
-    public void setNumUnidades(Long numUnidades) {
-        this.numUnidades = numUnidades;
+    public void setQuantidadeEmEstoque(Long quantidadeEmEstoque) {
+        this.quantidadeEmEstoque = quantidadeEmEstoque;
     }
 
     public String getAplicacao() {

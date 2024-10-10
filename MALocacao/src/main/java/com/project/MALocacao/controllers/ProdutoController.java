@@ -39,7 +39,7 @@ public class ProdutoController {
         if(produtoService.existsByNome(produtoDto.getNome())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse tipo de produto já existe!");
         }
-        if (produtoDto.getNumUnidades() < 0) {            
+        if (produtoDto.getQuantidadeEmEstoque() < 0) {            
              return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de unidades não pode ser negativo!");         
         }
 
@@ -94,7 +94,7 @@ public class ProdutoController {
         if (produtoService.existsByNome(produtoDto.getNome()) && !produtoModelOptional.get().getNome().equals(produtoDto.getNome())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse nome de produto já está em uso por outro produto.");
         }
-        if (produtoDto.getNumUnidades() != produtoModelOptional.get().getNumUnidades()){
+        if (produtoDto.getQuantidadeEmEstoque() != produtoModelOptional.get().getQuantidadeEmEstoque()){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de unidades em estoque só pode ser alterado através da Entrada e Saída.");
         }
 

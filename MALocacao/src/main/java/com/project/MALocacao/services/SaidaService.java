@@ -1,7 +1,6 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.models.SaidaModel;
-import com.project.MALocacao.controllers.ProdutoEntradas;
 import com.project.MALocacao.controllers.ProdutoSaidas;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.SaidaRepository;
@@ -49,12 +48,12 @@ public class SaidaService {
 
         /* Confere se a (quantidade) a ser retirada é maior que o estoque (NumUnidades) ou se o 
         valor dela é menor ou igual a zero (inválida)*/
-        if (saidaModel.getQuantidade() > produto.getNumUnidades() || saidaModel.getQuantidade() <= 0) {
+        if (saidaModel.getQuantidade() > produto.getQuantidadeEmEstoque() || saidaModel.getQuantidade() <= 0) {
             throw new RuntimeException("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
         }
 
         // altera o (número de unidades) no produto removendo pela (quantidade) vinda na Saída
-        produto.setNumUnidades(produto.getNumUnidades() - saidaModel.getQuantidade());
+        produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - saidaModel.getQuantidade());
 
         // Salva as alterações feitas no Produto
         produtoService.save(produto);
