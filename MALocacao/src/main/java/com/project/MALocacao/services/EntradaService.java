@@ -1,6 +1,8 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.controllers.ProdutoEntradas;
+import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
+import com.project.MALocacao.exception.QuantidadeInvalidaException;
 import com.project.MALocacao.models.EntradaModel;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.EntradaRepository;
@@ -37,21 +39,12 @@ public class EntradaService {
 
     @Transactional
     public EntradaModel createEntrada(EntradaModel entradaModel, Long produtoId) {
-        // pega o produto que veio na requisição
-        Optional<ProdutoModel> produtoOptional = produtoService.findById(produtoId);
-    
         // checa se o produto existe
-        if (!produtoOptional.isPresent()) {
-            throw new RuntimeException("Produto não encontrado com o ID: " + produtoId);
-        }
-        /* Confere se o valor dela é menor ou igual a zero (inválida)*/
-        if (entradaModel.getQuantidade() <= 0) {
-            throw new RuntimeException("Quantidade solicitada inválida.");
-        }
-
-         /* O valor foi retirado do Optional através do método get(), assumindo que o Optional contém um 
-            valor e não deve mais ser nulo. */
-        ProdutoModel produto = produtoOptional.get();
+        ProdutoModel produto = produtoService.findById(produtoId)
+            .orElseThrow(() -> new ProdutoNaoEncontradoException(produtoId));
+        
+        /* Confere se o valor da quantidade é menor ou igual a zero (inválida)*/
+        validarQuantidade(entradaModel.getQuantidade());
     
         // altera o (número de unidades) no produto adicionando a (quantidade) vinda na Entrada
         produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + entradaModel.getQuantidade());
@@ -64,6 +57,12 @@ public class EntradaService {
 
         // Salva a Entrada
         return save(entradaModel);
+    }
+
+    // Método já embutido no JPA
+    @Transactional
+    public void delete(EntradaModel entradaModel) {
+        entradaRepository.delete(entradaModel);
     }
 
     // Método já embutido no JPA
@@ -81,10 +80,10 @@ public class EntradaService {
         return entradaRepository.existsByProdutoId(produtoId);
     }
 
-    // Método já embutido no JPA
-    @Transactional
-    public void delete(EntradaModel entradaModel) {
-        entradaRepository.delete(entradaModel);
+    private void validarQuantidade(Long quantidade) {
+        if (quantidade <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
     }
 
     // retorna o id do produto e as entradas relacionadas a ele
