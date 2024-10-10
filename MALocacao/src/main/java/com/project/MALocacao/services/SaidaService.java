@@ -1,6 +1,8 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.models.SaidaModel;
+import com.project.MALocacao.controllers.ProdutoEntradas;
+import com.project.MALocacao.controllers.ProdutoSaidas;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.SaidaRepository;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -77,6 +80,11 @@ public class SaidaService {
     @Transactional
     public void delete(SaidaModel saidaModel) {
         saidaRepository.delete(saidaModel);
+    }
+
+    public ProdutoSaidas getProdutoSaidas(Long produtoId) {
+        var saidas = saidaRepository.getSaidasByProdutoId(produtoId);
+        return new ProdutoSaidas(produtoId, List.copyOf(saidas));
     }
 }
 

@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "PRODUTO")
@@ -31,9 +29,6 @@ public class ProdutoModel implements Serializable {
 
     @Column(length = 30)
     private String fornecedor;
-
-    // @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // private List<EntradaModel> entradas = new ArrayList<>();
 
     public Long getId() {
         return id;

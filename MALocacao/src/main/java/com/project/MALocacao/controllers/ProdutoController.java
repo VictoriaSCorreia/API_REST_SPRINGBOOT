@@ -4,6 +4,8 @@ import com.project.MALocacao.dtos.ProdutoDto;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.services.EntradaService;
 import com.project.MALocacao.services.ProdutoService;
+import com.project.MALocacao.services.SaidaService;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +25,12 @@ public class ProdutoController {
 
     final ProdutoService produtoService;
     final EntradaService entradaService; 
+    final SaidaService saidaService;
 
-    public ProdutoController(ProdutoService produtoService, EntradaService entradaService) {
+    public ProdutoController(ProdutoService produtoService, EntradaService entradaService, SaidaService saidaService) {
         this.produtoService = produtoService;
         this.entradaService = entradaService;
+        this.saidaService = saidaService;
     }
 
     @PostMapping
@@ -117,6 +121,16 @@ public class ProdutoController {
           .map(produto -> {
               ProdutoEntradas produtoEntradas = entradaService.getProdutoEntradas(produtoId);
               return ResponseEntity.ok(produtoEntradas);
+          })
+          .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @GetMapping("/{produtoId}/saidas")
+    public ResponseEntity<ProdutoSaidas> getProdutoSaidas(@PathVariable(value = "produtoId") Long produtoId) {
+        return produtoService.findById(produtoId)
+          .map(produto -> {
+              ProdutoSaidas produtoSaidas = saidaService.getProdutoSaidas(produtoId);
+              return ResponseEntity.ok(produtoSaidas);
           })
           .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }

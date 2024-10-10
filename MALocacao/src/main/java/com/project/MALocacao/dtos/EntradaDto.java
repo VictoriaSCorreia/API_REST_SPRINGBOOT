@@ -3,8 +3,6 @@ package com.project.MALocacao.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import org.springframework.cglib.core.Local;
-
 import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -51,10 +51,7 @@ public class SaidaController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneSaida(@PathVariable(value = "id") Long id){
         Optional<SaidaModel> saidaModelOptional = saidaService.findById(id);
-        if (!saidaModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saida não encontrada.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(saidaModelOptional.get());
+        return saidaModelOptional.<ResponseEntity<Object>>map(saidaModel -> ResponseEntity.status(HttpStatus.OK).body(saidaModel)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saída não encontrada."));
     }
 
     @DeleteMapping("/{id}")

@@ -3,6 +3,9 @@ package com.project.MALocacao.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -31,7 +34,8 @@ public class SaidaModel implements Serializable {
     private String locacao;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private ProdutoModel produto;
+    @JoinColumn(name = "produto_id")
+    @JsonIgnore private ProdutoModel produto;
 
     public Long getId() {
         return id;

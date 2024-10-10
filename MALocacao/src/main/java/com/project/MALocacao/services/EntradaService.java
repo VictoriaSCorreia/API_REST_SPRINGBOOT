@@ -88,6 +88,7 @@ public class EntradaService {
         entradaRepository.delete(entradaModel);
     }
 
+    // retorna o id do produto e as entradas relacionadas a ele
     public ProdutoEntradas getProdutoEntradas(Long produtoId) {
         var entradas = entradaRepository.getEntradasByProdutoId(produtoId);
         return new ProdutoEntradas(produtoId, List.copyOf(entradas));
