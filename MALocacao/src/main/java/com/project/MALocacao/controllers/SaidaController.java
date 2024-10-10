@@ -35,12 +35,8 @@ public class SaidaController {
     public ResponseEntity<Object> saveSaida(@RequestBody @Valid SaidaDto saidaDto, @RequestParam(value = "produtoId") Long produtoId){
         var saida = new SaidaModel();
         BeanUtils.copyProperties(saidaDto, saida);
-        try {
-            // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
-            return ResponseEntity.status(HttpStatus.CREATED).body(saidaService.createSaida(saida, produtoId));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
+        return ResponseEntity.status(HttpStatus.CREATED).body(saidaService.createSaida(saida, produtoId));
     }
 
     @GetMapping
@@ -56,51 +52,22 @@ public class SaidaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSaida(@PathVariable(value = "id") Long id){
-        Optional<SaidaModel> saidaModelOptional = saidaService.findById(id);
-        if (!saidaModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saida não encontrada.");
-        }
-        saidaService.delete(saidaModelOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Saida deletada.");
+        saidaService.validarSaidaExiste(id);
+        saidaService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Saida deletada.");  
+        
     }
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateSaida(@PathVariable(value = "id") Long id,
                                                 @RequestBody @Valid SaidaDto saidaDto) {
+        saidaService.validarSaidaExiste(id);
+        
         Optional<SaidaModel> saidaModelOptional = saidaService.findById(id);
-        if (!saidaModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Saida não encontrada.");
-        }
-
         SaidaModel saida = saidaModelOptional.get();
-        ProdutoModel produto = saida.getProduto(); 
+        ProdutoModel produto = saida.getProduto();
+        saidaService.validarQuantidadeUpdate(saida.getQuantidade(), saidaDto.getQuantidade(), produto.getQuantidadeEmEstoque()); 
 
-        if (saidaDto.getQuantidade() > produto.getQuantidadeEmEstoque() || saidaDto.getQuantidade() < 0){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
-        }
-
-        // Pega a quantidade anterior vinda na Saída e a nova
-        Long quantidadeAnterior = saida.getQuantidade();
-        Long novaQuantidade = saidaDto.getQuantidade();
-    
-        /* Pega as informações do DTO que veio no corpo da requisição e altera 
-        a SaidaModel 
-        (semelhante ao BeanUtils.copyProperties(produtoDto, produtoModel) em Produto Controller) */
-        saida.setData(saidaDto.getData());
-        saida.setQuantidade(novaQuantidade);
-        saida.setSolicitante(saidaDto.getSolicitante());
-        saida.setRequisicao(saidaDto.getRequisicao());
-        saida.setLocacao(saidaDto.getLocacao());
-    
-        // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Saida
-        if (novaQuantidade > quantidadeAnterior) {
-            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - (novaQuantidade - quantidadeAnterior));
-        } else if (novaQuantidade < quantidadeAnterior) {
-            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + (quantidadeAnterior - novaQuantidade));
-        }
-
-        // Salva alterações
-        produtoService.save(produto); 
-        return ResponseEntity.status(HttpStatus.OK).body(saidaService.save(saida));
+        return ResponseEntity.status(HttpStatus.OK).body(saidaService.updateSaida(id, saidaDto));
     }
 }
 

@@ -2,7 +2,7 @@ package com.project.MALocacao.exception;
 
 public class QuantidadeInvalidaException extends RuntimeException {
     public QuantidadeInvalidaException() {
-        super("Quantidade informada inválida. Deve ser um valor positivo.");
+        super("Quantidade inválida. Informar um valor positivo ou que não ultrapasse o estoque.");
 
     }
 }

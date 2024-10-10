@@ -31,13 +31,10 @@ public class EntradaService {
 
     @Transactional
     public EntradaModel save(EntradaModel entradaModel) {
-        /*
-         * Pega a (quantidade de unidades) que foi dada no corpo da Entrada e
-         * multiplica pelo (valor unitário) do (Produto) associado para setar o
-         * (valorTotal)
-         */
+        /* Pega a (quantidade de unidades) que foi dada no corpo da Entrada e
+        multiplica pelo (valor unitário) do (Produto) associado para setar o
+        (valorTotal) */
         entradaModel.setValorTotal(BigDecimal.valueOf(entradaModel.getQuantidade()).multiply(entradaModel.getProduto().getValorUnidade()));
-
         // Método já embutido no JPA
         return entradaRepository.save(entradaModel);
     }
@@ -48,10 +45,10 @@ public class EntradaService {
         ProdutoModel produto = produtoService.findById(produtoId)
                 .orElseThrow(() -> new ProdutoNaoEncontradoException(produtoId));
 
-        /* Confere se o valor da quantidade é menor ou igual a zero (inválida) */
+        /* Confere se o valor da quantidade é positivo */
         validarQuantidade(entradaModel.getQuantidade());
 
-        // altera o (número de unidades) no produto adicionando a (quantidade) vinda na Entrada
+        // Altera o estoque no produto adicionando a quantidade vinda na Saída
         produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + entradaModel.getQuantidade());
 
         // Salva as alterações feitas no Produto
@@ -84,6 +81,7 @@ public class EntradaService {
         return entradaRepository.existsById(id);
     }
 
+    // Método já embutido no JPA
     public void deleteById(Long id) {
         entradaRepository.deleteById(id);
     }
@@ -94,41 +92,50 @@ public class EntradaService {
         return entradaRepository.existsByProdutoId(produtoId);
     }
 
-    public void validarQuantidade(Long quantidade) {
-        if (quantidade <= 0) {
-            throw new QuantidadeInvalidaException();
-        }
-    }
     public void validarEntradaExiste(Long entradaId) {
         if (!existsById(entradaId)) {
             throw new EntradaNaoEncontradaException(entradaId);
         }
     }
 
+    public void validarQuantidade(Long quantidade) {
+        if (quantidade <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
+    }
+
+    public void validarQuantidadeUpdate(Long novaQuantidade, Long quantidadeAnterior, Long estoque){
+        if (estoque + (novaQuantidade - quantidadeAnterior) < 0){
+            throw new QuantidadeInvalidaException();
+        }
+    }  
+    
     @Transactional
     public EntradaModel updateEntrada(Long id, EntradaDto entradaDto) {
         Optional<EntradaModel> entradaModelOptional = findById(id);
-
         var entrada = entradaModelOptional.get();
-
-        // Pega as informações do DTO que veio no corpo da requisição e altera a EntradaModel 
-        entrada.setData(entradaDto.getData());
-        entrada.setNotaFiscal(entradaDto.getNotaFiscal());
-
         ProdutoModel produto = entrada.getProduto();
 
         // Pega a quantidade anterior vinda na Entrada e a nova
         Long quantidadeAnterior = entrada.getQuantidade();
         Long novaQuantidade = entradaDto.getQuantidade();
 
-        entrada.setQuantidade(novaQuantidade);
+        /* Valida se alteração da quantidade de uma Entrada menos(-) as quantidades retiradas nas Saídas 
+        já existentes resultarão num estoque negativo */
+        validarQuantidadeUpdate(novaQuantidade, quantidadeAnterior, produto.getQuantidadeEmEstoque());
 
-        // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Entrada
+        // Subtrai ou adiciona (estoque) em Produto dependendo da alteração feita em (quantidade) na Entrada
         if (novaQuantidade > quantidadeAnterior) {
             produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + (novaQuantidade - quantidadeAnterior));
         } else if (novaQuantidade < quantidadeAnterior) {
             produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - (quantidadeAnterior - novaQuantidade));
         }
+
+        // Pega as informações do DTO que veio no corpo da requisição e altera a EntradaModel 
+        entrada.setQuantidade(novaQuantidade);
+        entrada.setData(entradaDto.getData());
+        entrada.setNotaFiscal(entradaDto.getNotaFiscal());
+
         produtoService.save(produto);
         return save(entrada);
     }

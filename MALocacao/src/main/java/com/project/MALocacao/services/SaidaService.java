@@ -2,8 +2,13 @@ package com.project.MALocacao.services;
 
 import com.project.MALocacao.models.SaidaModel;
 import com.project.MALocacao.controllers.ProdutoSaidas;
+import com.project.MALocacao.dtos.SaidaDto;
+import com.project.MALocacao.exception.SaidaNaoEncontradaException;
+import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
+import com.project.MALocacao.exception.QuantidadeInvalidaException;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.SaidaRepository;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,30 +34,20 @@ public class SaidaService {
         /*  Pega a (quantidade de unidades) que foi dada no corpo da Saída e 
         multiplica pelo (valor unitário) do (Produto) associado para setar o (valorTotal) */
         saidaModel.setValorTotal(BigDecimal.valueOf(saidaModel.getQuantidade()).multiply(saidaModel.getProduto().getValorUnidade()));
+        // Método já embutido no JPA
         return saidaRepository.save(saidaModel);
     }
 
     @Transactional
     public SaidaModel createSaida(SaidaModel saidaModel, Long produtoId) {
-         // pega o produto que veio na requisição
-        Optional<ProdutoModel> produtoOptional = produtoService.findById(produtoId);
-    
         // checa se o produto existe
-        if (!produtoOptional.isPresent()) {
-            throw new RuntimeException("Produto não encontrado com o ID: " + produtoId);
-        }
+        ProdutoModel produto = produtoService.findById(produtoId)
+                .orElseThrow(() -> new ProdutoNaoEncontradoException(produtoId));
 
-        /* O valor foi retirado do Optional através do método get(), assumindo que o Optional contém um 
-            valor e não deve mais ser nulo. */
-        ProdutoModel produto = produtoOptional.get();
+        // Confere se o valor da quantidade é positivo ou menor que o estoque
+        validarQuantidadeCreate(saidaModel.getQuantidade(), produto.getQuantidadeEmEstoque());
 
-        /* Confere se a (quantidade) a ser retirada é maior que o estoque (NumUnidades) ou se o 
-        valor dela é menor ou igual a zero (inválida)*/
-        if (saidaModel.getQuantidade() > produto.getQuantidadeEmEstoque() || saidaModel.getQuantidade() <= 0) {
-            throw new RuntimeException("Quantidade solicitada inválida ou maior que o estoque disponível do produto.");
-        }
-
-        // altera o (número de unidades) no produto removendo pela (quantidade) vinda na Saída
+        // Altera o estoque no produto subtraindo pela quantidade vinda na Saída
         produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - saidaModel.getQuantidade());
 
         // Salva as alterações feitas no Produto
@@ -61,8 +56,14 @@ public class SaidaService {
         // Finalmente associa ESSE Produto à ESSA Saída
         saidaModel.setProduto(produto);
 
-        // Salva a Entrada
+        // Salva a Saida
         return save(saidaModel);
+    }
+
+    // Método já embutido no JPA
+    @Transactional
+    public void delete(SaidaModel saidaModel) {
+        saidaRepository.delete(saidaModel);
     }
 
     // Método já embutido no JPA
@@ -75,10 +76,61 @@ public class SaidaService {
         return saidaRepository.findById(id);
     }
 
+    public boolean existsById(Long id) {
+        return saidaRepository.existsById(id);
+    }
+
     // Método já embutido no JPA
+    public void deleteById(Long id) {
+        saidaRepository.deleteById(id);
+    }
+
+    public void validarQuantidadeCreate(Long quantidade, Long estoque) {
+        if (quantidade > estoque || quantidade <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
+    }
+
+    public void validarQuantidadeUpdate(Long quantidadeAnterior, Long quantidadeAtual, Long estoque) {
+        if (quantidadeAtual > (estoque + quantidadeAnterior) || quantidadeAtual <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
+    }
+
+    public void validarSaidaExiste(Long saidaId) {
+        if (!existsById(saidaId)) {
+            throw new SaidaNaoEncontradaException(saidaId);
+        }
+    }
+
     @Transactional
-    public void delete(SaidaModel saidaModel) {
-        saidaRepository.delete(saidaModel);
+    public SaidaModel updateSaida(Long id, SaidaDto saidaDto) {
+        Optional<SaidaModel> saidaModelOptional = findById(id);
+
+        var saida = saidaModelOptional.get();
+
+        // Pega as informações do DTO que veio no corpo da requisição e altera a SaidaModel 
+        saida.setData(saidaDto.getData());
+        saida.setSolicitante(saidaDto.getSolicitante());
+        saida.setRequisicao(saidaDto.getRequisicao());
+        saida.setLocacao(saidaDto.getLocacao());
+
+        ProdutoModel produto = saida.getProduto();
+
+        // Pega a quantidade anterior vinda na Saida e a nova
+        Long quantidadeAnterior = saida.getQuantidade();
+        Long novaQuantidade = saidaDto.getQuantidade();
+
+        saida.setQuantidade(novaQuantidade);
+
+        // Subtrai ou adiciona (unidades) em Produto dependendo da alteração feita em (quantidade) na Saida
+        if (novaQuantidade > quantidadeAnterior) {
+            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - (novaQuantidade - quantidadeAnterior));
+        } else if (novaQuantidade < quantidadeAnterior) {
+            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() + (quantidadeAnterior - novaQuantidade));
+        }
+        produtoService.save(produto);
+        return save(saida);
     }
 
     public ProdutoSaidas getProdutoSaidas(Long produtoId) {
