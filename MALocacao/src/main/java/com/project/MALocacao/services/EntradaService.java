@@ -106,8 +106,8 @@ public class EntradaService {
     }
 
     @Transactional
-    public EntradaModel updateEntrada(Long produtoId, EntradaDto entradaDto) {
-        Optional<EntradaModel> entradaModelOptional = findById(produtoId);
+    public EntradaModel updateEntrada(Long id, EntradaDto entradaDto) {
+        Optional<EntradaModel> entradaModelOptional = findById(id);
 
         var entrada = entradaModelOptional.get();
 

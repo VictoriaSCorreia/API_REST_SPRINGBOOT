@@ -1,9 +1,7 @@
 package com.project.MALocacao.controllers;
 
 import com.project.MALocacao.dtos.EntradaDto;
-import com.project.MALocacao.exception.QuantidadeInvalidaException;
 import com.project.MALocacao.models.EntradaModel;
-import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.services.EntradaService;
 import com.project.MALocacao.services.ProdutoService;
 
