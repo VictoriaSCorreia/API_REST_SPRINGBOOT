@@ -32,50 +32,42 @@ public class EntradaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveEntrada(@RequestBody @Valid EntradaDto entradaDto, @RequestParam(value = "produtoId") Long produtoId) {
+    public ResponseEntity<Object> saveEntrada(@RequestBody @Valid EntradaDto entradaDto,
+            @RequestParam(value = "produtoId") Long produtoId) {
         var entrada = new EntradaModel();
         BeanUtils.copyProperties(entradaDto, entrada);
-        // Usa-se o método create e não o save pois há verificações necessárias com relação ao (produto) 
+        // Usa-se o método create e não o save pois há verificações necessárias com
+        // relação ao (produto)
         return ResponseEntity.status(HttpStatus.CREATED).body(entradaService.createEntrada(entrada, produtoId));
     }
 
     @GetMapping
-    public ResponseEntity<Page<EntradaModel>> getAllEntradas(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Page<EntradaModel>> getAllEntradas(
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(entradaService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneEntrada(@PathVariable(value = "id") Long id) {
         Optional<EntradaModel> entradaModelOptional = entradaService.findById(id);
-        return entradaModelOptional.<ResponseEntity<Object>>map(entradaModel -> ResponseEntity.status(HttpStatus.OK).body(entradaModel)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada."));
+        return entradaModelOptional
+                .<ResponseEntity<Object>>map(entradaModel -> ResponseEntity.status(HttpStatus.OK).body(entradaModel))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada não encontrada."));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteEntrada(@PathVariable Long id) {
         entradaService.validarEntradaExiste(id);
         entradaService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Entrada deletada.");  
+        return ResponseEntity.status(HttpStatus.OK).body("Entrada deletada.");
     }
-
-    /* @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEntrada(@PathVariable Long id) {
-        if (entradaService.existsById(id)) {
-            entradaService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
-        }
-    } */
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEntrada(@PathVariable(value = "id") Long id,
-                                                @RequestBody @Valid EntradaDto entradaDto) {
+            @RequestBody @Valid EntradaDto entradaDto) {
 
         entradaService.validarEntradaExiste(id);
         entradaService.validarQuantidade(entradaDto.getQuantidade());
         return ResponseEntity.status(HttpStatus.OK).body(entradaService.updateEntrada(id, entradaDto));
     }
 }
-
-
-

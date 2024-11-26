@@ -1,5 +1,7 @@
 package com.project.MALocacao.services;
 
+import com.project.MALocacao.exception.EntradaNaoEncontradaException;
+import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.ProdutoRepository;
 import org.springframework.data.domain.Page;
@@ -28,25 +30,34 @@ public class ProdutoService {
         // Método já embutido no JPA
         return produtoRepository.save(produtoModel);
     }
-
-    // Confere se o produto existe através de seu nome(Usado em ProdutoController)
-    public boolean existsByNome(String nome) {
-        return produtoRepository.existsByNome(nome);
+    @Transactional
+    public void delete(ProdutoModel produtoModel) {
+        // Método já embutido no JPA
+        produtoRepository.delete(produtoModel);
     }
 
     public Page<ProdutoModel> findAll(Pageable pageable) {
         // Método já embutido no JPA
         return produtoRepository.findAll(pageable);
     }
-
     public Optional<ProdutoModel> findById(Long id) {
         // Método já embutido no JPA
         return produtoRepository.findById(id);
     }
-    @Transactional
-    public void delete(ProdutoModel produtoModel) {
-        // Método já embutido no JPA
-        produtoRepository.delete(produtoModel);
+
+    // Confere se o produto existe através de seu nome(Usado em ProdutoController)
+    public boolean existsByNome(String nome) {
+        return produtoRepository.existsByNome(nome);
     }
+    public boolean existsById(Long id) {
+        return produtoRepository.existsById(id);
+    }
+
+    public void validarProdutoExiste(Long produtoId) {
+        if (!existsById(produtoId)) {
+            throw new ProdutoNaoEncontradoException(produtoId);
+        }
+    }
+    
 }
 
