@@ -35,32 +35,16 @@ public class ProdutoController {
 
     @PostMapping
     public ResponseEntity<Object> saveProduto(@RequestBody @Valid ProdutoDto produtoDto){
-        // Confere se o produto já existe pelo nome(unique)
-        if(produtoService.existsByNome(produtoDto.getNome())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse tipo de produto já existe!");
-        }
-        if (produtoDto.getQuantidadeEmEstoque() < 0) {            
-             return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de unidades não pode ser negativo!");         
-        }
-
         // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
-        var produtoModel = new ProdutoModel();
-        BeanUtils.copyProperties(produtoDto, produtoModel);
-
-        // Salva
-        try{
-            return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produtoModel));
-        }
-        catch(RuntimeException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Valor deve ser maior que 0");
-        }
+        var produto = new ProdutoModel();
+        BeanUtils.copyProperties(produtoDto, produto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produto));
     }
 
     @GetMapping
     public ResponseEntity<Page<ProdutoModel>> getAllProdutos(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return ResponseEntity.status(HttpStatus.OK).body(produtoService.findAll(pageable));
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneProduto(@PathVariable(value = "id") Long id){

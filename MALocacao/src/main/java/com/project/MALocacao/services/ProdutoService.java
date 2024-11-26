@@ -1,11 +1,17 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.exception.EntradaNaoEncontradaException;
+import com.project.MALocacao.exception.ProdutoJaExisteException;
 import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
+import com.project.MALocacao.exception.QuantidadeInvalidaException;
+import com.project.MALocacao.exception.QuantidadeProdutoInvalidaException;
+import com.project.MALocacao.exception.ValorInvalidoException;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.ProdutoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -24,12 +30,17 @@ public class ProdutoService {
 
     @Transactional
     public ProdutoModel save(ProdutoModel produtoModel) {
-        if (produtoModel.getValorUnidade().compareTo(BigDecimal.ZERO) <= 0){
-            throw new RuntimeException();
-        }
+        // Confere se o produto já existe pelo nome(unique)
+        validarProdutoExisteByNome(produtoModel.getNome());
+        // Confere se a quantidade dada de estoque é positiva
+        validarQuantidade(produtoModel.getQuantidadeEmEstoque());
+        // Confere se o valor é maior que 0
+        validarValor(produtoModel);
+
         // Método já embutido no JPA
         return produtoRepository.save(produtoModel);
     }
+
     @Transactional
     public void delete(ProdutoModel produtoModel) {
         // Método já embutido no JPA
@@ -58,6 +69,20 @@ public class ProdutoService {
             throw new ProdutoNaoEncontradoException(produtoId);
         }
     }
-    
+    public void validarProdutoExisteByNome(String nome) {
+        if (existsByNome(nome)) {
+            throw new ProdutoJaExisteException(nome);
+        }
+    }
+    public void validarQuantidade(Long quantidade) {
+        if (quantidade < 0) {
+            throw new QuantidadeProdutoInvalidaException();
+        }
+    }  
+    public void validarValor(ProdutoModel produto) {
+        if (produto.getValorUnidade().compareTo(BigDecimal.ZERO) <= 0){
+            throw new ValorInvalidoException();
+        }
+    } 
 }
 
