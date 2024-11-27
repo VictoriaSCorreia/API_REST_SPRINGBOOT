@@ -49,10 +49,9 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneProduto(@PathVariable(value = "id") Long id){
         Optional<ProdutoModel> produtoModelOptional = produtoService.findById(id);
-        if (!produtoModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(produtoModelOptional.get());
+        return produtoModelOptional
+                .<ResponseEntity<Object>>map(produtoModel -> ResponseEntity.status(HttpStatus.OK).body(produtoModel))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado."));
     }
 
     @DeleteMapping("/{id}")
