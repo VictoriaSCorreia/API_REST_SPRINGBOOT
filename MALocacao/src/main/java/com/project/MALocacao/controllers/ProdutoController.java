@@ -38,7 +38,7 @@ public class ProdutoController {
         // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         var produto = new ProdutoModel();
         BeanUtils.copyProperties(produtoDto, produto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.create(produto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produto));
     }
 
     @GetMapping
@@ -57,6 +57,7 @@ public class ProdutoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProduto(@PathVariable(value = "id") Long id) {
         produtoService.validarProdutoExiste(id);
+        // valida se há entradas associadas a esse produto. Caso haja, ele não pode ser excluído
         produtoService.validarEntradasAssociadas(entradaService, id);
         produtoService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Produto deletado.");
@@ -67,7 +68,6 @@ public class ProdutoController {
                                                     @RequestBody @Valid ProdutoDto produtoDto){
         Optional<ProdutoModel> produtoModelOptional = produtoService.findById(id);                                                
         var produtoModel = produtoModelOptional.get();
-        // Salva
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.update(produtoModel, produtoModelOptional, produtoDto)); 
     }
 
@@ -91,4 +91,3 @@ public class ProdutoController {
           .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }
-

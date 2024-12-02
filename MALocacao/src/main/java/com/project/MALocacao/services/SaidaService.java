@@ -60,49 +60,6 @@ public class SaidaService {
         return save(saidaModel);
     }
 
-    // Método já embutido no JPA
-    @Transactional
-    public void delete(SaidaModel saidaModel) {
-        saidaRepository.delete(saidaModel);
-    }
-
-    // Método já embutido no JPA
-    public Page<SaidaModel> findAll(Pageable pageable) {
-        return saidaRepository.findAll(pageable);
-    }
-
-    // Método já embutido no JPA
-    public Optional<SaidaModel> findById(Long id) {
-        return saidaRepository.findById(id);
-    }
-
-    public boolean existsById(Long id) {
-        return saidaRepository.existsById(id);
-    }
-
-    // Método já embutido no JPA
-    public void deleteById(Long id) {
-        saidaRepository.deleteById(id);
-    }
-
-    public void validarQuantidadeCreate(Long quantidade, Long estoque) {
-        if (quantidade > estoque || quantidade <= 0) {
-            throw new QuantidadeInvalidaException();
-        }
-    }
-
-    public void validarQuantidadeUpdate(Long quantidadeAnterior, Long quantidadeAtual, Long estoque) {
-        if (quantidadeAtual > (estoque + quantidadeAnterior) || quantidadeAtual <= 0) {
-            throw new QuantidadeInvalidaException();
-        }
-    }
-
-    public void validarSaidaExiste(Long saidaId) {
-        if (!existsById(saidaId)) {
-            throw new SaidaNaoEncontradaException(saidaId);
-        }
-    }
-
     @Transactional
     public SaidaModel updateSaida(Long id, SaidaDto saidaDto) {
         Optional<SaidaModel> saidaModelOptional = findById(id);
@@ -131,6 +88,46 @@ public class SaidaService {
         }
         produtoService.save(produto);
         return save(saida);
+    }
+
+    // Método já embutido no JPA
+    @Transactional
+    public void delete(SaidaModel saidaModel) {
+        saidaRepository.delete(saidaModel);
+    }
+
+    public Page<SaidaModel> findAll(Pageable pageable) {
+        // Método já embutido no JPA
+        return saidaRepository.findAll(pageable);
+    }
+    public Optional<SaidaModel> findById(Long id) {
+        // Método já embutido no JPA
+        return saidaRepository.findById(id);
+    }
+    public void deleteById(Long id) {
+        // Método já embutido no JPA
+        saidaRepository.deleteById(id);
+    }
+    public boolean existsById(Long id) {
+        // Método já embutido no JPA
+        return saidaRepository.existsById(id);
+    }
+
+    public void validarQuantidadeCreate(Long quantidade, Long estoque) {
+        if (quantidade > estoque || quantidade <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
+    }
+    public void validarQuantidadeUpdate(Long quantidadeAnterior, Long quantidadeAtual, Long estoque) {
+        if (quantidadeAtual > (estoque + quantidadeAnterior) || quantidadeAtual <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
+    }
+
+    public void validarSaidaExiste(Long saidaId) {
+        if (!existsById(saidaId)) {
+            throw new SaidaNaoEncontradaException(saidaId);
+        }
     }
 
     public ProdutoSaidas getProdutoSaidas(Long produtoId) {

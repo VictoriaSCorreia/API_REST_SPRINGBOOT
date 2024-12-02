@@ -61,55 +61,6 @@ public class EntradaService {
         return save(entradaModel);
     }
 
-    // Método já embutido no JPA
-    @Transactional
-    public void delete(EntradaModel entradaModel) {
-        entradaRepository.delete(entradaModel);
-    }
-
-    // Método já embutido no JPA
-    public Page<EntradaModel> findAll(Pageable pageable) {
-        return entradaRepository.findAll(pageable);
-    }
-
-    // Método já embutido no JPA
-    public Optional<EntradaModel> findById(Long id) {
-        return entradaRepository.findById(id);
-    }
-
-    public boolean existsById(Long id) {
-        return entradaRepository.existsById(id);
-    }
-
-    // Método já embutido no JPA
-    public void deleteById(Long id) {
-        entradaRepository.deleteById(id);
-    }
-
-    /* Confere se a Entrada existe através do id do produto associado à ela (usado
-    em ProdutoController) */
-    public boolean existsByProdutoId(Long produtoId) {
-        return entradaRepository.existsByProdutoId(produtoId);
-    }
-
-    public void validarEntradaExiste(Long entradaId) {
-        if (!existsById(entradaId)) {
-            throw new EntradaNaoEncontradaException(entradaId);
-        }
-    }
-
-    public void validarQuantidade(Long quantidade) {
-        if (quantidade <= 0) {
-            throw new QuantidadeInvalidaException();
-        }
-    }
-
-    public void validarQuantidadeUpdate(Long novaQuantidade, Long quantidadeAnterior, Long estoque){
-        if (estoque + (novaQuantidade - quantidadeAnterior) < 0){
-            throw new QuantidadeInvalidaException();
-        }
-    }  
-    
     @Transactional
     public EntradaModel updateEntrada(Long id, EntradaDto entradaDto) {
         Optional<EntradaModel> entradaModelOptional = findById(id);
@@ -139,6 +90,51 @@ public class EntradaService {
         produtoService.save(produto);
         return save(entrada);
     }
+    
+    // Método já embutido no JPA
+    @Transactional
+    public void delete(EntradaModel entradaModel) {
+        entradaRepository.delete(entradaModel);
+    }
+
+    public Page<EntradaModel> findAll(Pageable pageable) {
+        // Método já embutido no JPA
+        return entradaRepository.findAll(pageable);
+    }
+    public Optional<EntradaModel> findById(Long id) {
+        // Método já embutido no JPA
+        return entradaRepository.findById(id);
+    }
+    public void deleteById(Long id) {
+        // Método já embutido no JPA
+        entradaRepository.deleteById(id);
+    }
+
+    public boolean existsById(Long id) {
+        return entradaRepository.existsById(id);
+    }
+    /* Confere se a Entrada existe através do id do produto associado à ela (usado
+    em ProdutoController) */
+    public boolean existsByProdutoId(Long produtoId) {
+        return entradaRepository.existsByProdutoId(produtoId);
+    }
+
+    public void validarEntradaExiste(Long entradaId) {
+        if (!existsById(entradaId)) {
+            throw new EntradaNaoEncontradaException(entradaId);
+        }
+    }
+
+    public void validarQuantidade(Long quantidade) {
+        if (quantidade <= 0) {
+            throw new QuantidadeInvalidaException();
+        }
+    }
+    public void validarQuantidadeUpdate(Long novaQuantidade, Long quantidadeAnterior, Long estoque){
+        if (estoque + (novaQuantidade - quantidadeAnterior) < 0){
+            throw new QuantidadeInvalidaException();
+        }
+    }  
 
     // retorna o id do produto e as entradas relacionadas a ele
     public ProdutoEntradas getProdutoEntradas(Long produtoId) {

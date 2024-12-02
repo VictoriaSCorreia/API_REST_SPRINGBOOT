@@ -65,7 +65,6 @@ public class EntradaController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateEntrada(@PathVariable(value = "id") Long id,
             @RequestBody @Valid EntradaDto entradaDto) {
-
         entradaService.validarEntradaExiste(id);
         entradaService.validarQuantidade(entradaDto.getQuantidade());
         return ResponseEntity.status(HttpStatus.OK).body(entradaService.updateEntrada(id, entradaDto));
