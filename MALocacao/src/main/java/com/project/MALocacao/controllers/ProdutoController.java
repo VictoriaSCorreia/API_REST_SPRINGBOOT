@@ -38,7 +38,7 @@ public class ProdutoController {
         // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         var produto = new ProdutoModel();
         BeanUtils.copyProperties(produtoDto, produto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.create(produto));
     }
 
     @GetMapping
@@ -65,32 +65,10 @@ public class ProdutoController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateProduto(@PathVariable(value = "id") Long id,
                                                     @RequestBody @Valid ProdutoDto produtoDto){
-        Optional<ProdutoModel> produtoModelOptional = produtoService.findById(id);
-        if (!produtoModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado.");
-        }
-        if (produtoService.existsByNome(produtoDto.getNome()) && !produtoModelOptional.get().getNome().equals(produtoDto.getNome())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse nome de produto já está em uso por outro produto.");
-        }
-        if (produtoDto.getQuantidadeEmEstoque() != produtoModelOptional.get().getQuantidadeEmEstoque()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de unidades em estoque só pode ser alterado através da Entrada e Saída.");
-        }
-
+        Optional<ProdutoModel> produtoModelOptional = produtoService.findById(id);                                                
         var produtoModel = produtoModelOptional.get();
-
-        // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
-        BeanUtils.copyProperties(produtoDto, produtoModel);
-
-        // Precisa setar o ID manualmente pois o DTO não possui esse campo(ele é gerado automaticamente no Model)
-        produtoModel.setId(produtoModelOptional.get().getId());
-
         // Salva
-         try{
-            return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.save(produtoModel));
-        }
-        catch(RuntimeException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Valor deve ser maior que 0");
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoService.update(produtoModel, produtoModelOptional, produtoDto)); 
     }
 
     @GetMapping("/{produtoId}/entradas")

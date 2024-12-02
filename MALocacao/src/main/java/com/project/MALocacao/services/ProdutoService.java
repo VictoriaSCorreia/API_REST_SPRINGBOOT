@@ -1,5 +1,7 @@
 package com.project.MALocacao.services;
 
+import com.project.MALocacao.dtos.ProdutoDto;
+import com.project.MALocacao.exception.AlteracaoDeEstoqueInvalidaException;
 import com.project.MALocacao.exception.EntradaNaoEncontradaException;
 import com.project.MALocacao.exception.EntradasAssociadasException;
 import com.project.MALocacao.exception.ProdutoJaExisteException;
@@ -9,6 +11,8 @@ import com.project.MALocacao.exception.QuantidadeProdutoInvalidaException;
 import com.project.MALocacao.exception.ValorInvalidoException;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.ProdutoRepository;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,13 +34,29 @@ public class ProdutoService {
     }
 
     @Transactional
-    public ProdutoModel save(ProdutoModel produtoModel) {
+    public ProdutoModel create(ProdutoModel produtoModel) {
         // Confere se o produto já existe pelo nome(unique)
         validarProdutoExisteByNome(produtoModel.getNome());
         // Confere se a quantidade dada de estoque é positiva
         validarQuantidade(produtoModel.getQuantidadeEmEstoque());
         // Confere se o valor é maior que 0
         validarValor(produtoModel);
+
+        // Método já embutido no JPA
+        return produtoRepository.save(produtoModel);
+    }
+
+    public ProdutoModel update(ProdutoModel produtoModel, Optional<ProdutoModel> produtoModelOptional, ProdutoDto produtoDto) {
+        validarProdutoExiste(produtoModel.getId());
+        validarAlteracaoDeNome(produtoDto, produtoModel);
+        validarAlteracaoDeEstoque(produtoDto, produtoModel);
+        validarValor(produtoModel);
+
+        // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
+        BeanUtils.copyProperties(produtoDto, produtoModel);
+
+        // Precisa setar o ID manualmente pois o DTO não possui esse campo(ele é gerado automaticamente no Model)
+        produtoModel.setId(produtoModelOptional.get().getId());
 
         // Método já embutido no JPA
         return produtoRepository.save(produtoModel);
@@ -80,6 +100,17 @@ public class ProdutoService {
             throw new ProdutoJaExisteException(nome);
         }
     }
+    public void validarAlteracaoDeNome(ProdutoDto produtoDto, ProdutoModel produtoModel) {
+        if (existsByNome(produtoDto.getNome()) && !produtoModel.getNome().equals(produtoDto.getNome())) {
+            throw new ProdutoJaExisteException(produtoDto.getNome());
+        }
+    }
+    public void validarAlteracaoDeEstoque(ProdutoDto produtoDto, ProdutoModel produtoModel) {
+        if (produtoDto.getQuantidadeEmEstoque() != produtoModel.getQuantidadeEmEstoque()) {
+            throw new AlteracaoDeEstoqueInvalidaException();
+        }
+    }
+
     public void validarQuantidade(Long quantidade) {
         if (quantidade < 0) {
             throw new QuantidadeProdutoInvalidaException();
