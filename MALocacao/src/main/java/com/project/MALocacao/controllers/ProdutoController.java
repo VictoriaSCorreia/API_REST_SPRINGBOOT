@@ -56,14 +56,9 @@ public class ProdutoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProduto(@PathVariable(value = "id") Long id) {
-        Optional<ProdutoModel> produtoModelOptional = produtoService.findById(id);
-        if (!produtoModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado.");
-        }
-        if (entradaService.existsByProdutoId(id)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Não é possível excluir este produto porque ele possui entradas associadas.");
-        }
-        produtoService.delete(produtoModelOptional.get());
+        produtoService.validarProdutoExiste(id);
+        produtoService.validarEntradasAssociadas(entradaService, id);
+        produtoService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Produto deletado.");
     }
 

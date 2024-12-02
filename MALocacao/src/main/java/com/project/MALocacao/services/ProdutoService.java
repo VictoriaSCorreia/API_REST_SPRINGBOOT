@@ -1,6 +1,7 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.exception.EntradaNaoEncontradaException;
+import com.project.MALocacao.exception.EntradasAssociadasException;
 import com.project.MALocacao.exception.ProdutoJaExisteException;
 import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
 import com.project.MALocacao.exception.QuantidadeInvalidaException;
@@ -64,6 +65,11 @@ public class ProdutoService {
         return produtoRepository.existsById(id);
     }
 
+    // Método já embutido no JPA
+    public void deleteById(Long id) {
+        produtoRepository.deleteById(id);
+    }
+
     public void validarProdutoExiste(Long produtoId) {
         if (!existsById(produtoId)) {
             throw new ProdutoNaoEncontradoException(produtoId);
@@ -84,5 +90,11 @@ public class ProdutoService {
             throw new ValorInvalidoException();
         }
     } 
+
+    public void validarEntradasAssociadas(EntradaService entradaService, Long id){
+        if (entradaService.existsByProdutoId(id)){
+            throw new EntradasAssociadasException();
+        }
+    }
 }
 
