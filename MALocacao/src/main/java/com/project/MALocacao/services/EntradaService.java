@@ -2,9 +2,9 @@ package com.project.MALocacao.services;
 
 import com.project.MALocacao.controllers.ProdutoEntradas;
 import com.project.MALocacao.dtos.EntradaDto;
-import com.project.MALocacao.exception.EntradaNaoEncontradaException;
-import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
-import com.project.MALocacao.exception.QuantidadeInvalidaException;
+import com.project.MALocacao.exceptions.EntradaNaoEncontradaException;
+import com.project.MALocacao.exceptions.ProdutoNaoEncontradoException;
+import com.project.MALocacao.exceptions.QuantidadeInvalidaException;
 import com.project.MALocacao.models.EntradaModel;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.EntradaRepository;

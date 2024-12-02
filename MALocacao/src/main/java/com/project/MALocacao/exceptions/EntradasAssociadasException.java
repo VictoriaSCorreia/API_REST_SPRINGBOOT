@@ -1,4 +1,4 @@
-package com.project.MALocacao.exception;
+package com.project.MALocacao.exceptions;
 
 public class EntradasAssociadasException extends RuntimeException {
     public EntradasAssociadasException() {

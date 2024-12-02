@@ -3,9 +3,9 @@ package com.project.MALocacao.services;
 import com.project.MALocacao.models.SaidaModel;
 import com.project.MALocacao.controllers.ProdutoSaidas;
 import com.project.MALocacao.dtos.SaidaDto;
-import com.project.MALocacao.exception.SaidaNaoEncontradaException;
-import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
-import com.project.MALocacao.exception.QuantidadeInvalidaException;
+import com.project.MALocacao.exceptions.ProdutoNaoEncontradoException;
+import com.project.MALocacao.exceptions.QuantidadeInvalidaException;
+import com.project.MALocacao.exceptions.SaidaNaoEncontradaException;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.SaidaRepository;
 
@@ -111,6 +111,12 @@ public class SaidaService {
     public boolean existsById(Long id) {
         // Método já embutido no JPA
         return saidaRepository.existsById(id);
+    }
+
+    /* Confere se a Saida existe através do id do produto associado à ela (usado
+    em ProdutoController) */
+    public boolean existsByProdutoId(Long produtoId) {
+        return saidaRepository.existsByProdutoId(produtoId);
     }
 
     public void validarQuantidadeCreate(Long quantidade, Long estoque) {

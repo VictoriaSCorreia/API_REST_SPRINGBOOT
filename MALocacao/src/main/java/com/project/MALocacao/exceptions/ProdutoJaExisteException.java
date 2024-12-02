@@ -1,4 +1,4 @@
-package com.project.MALocacao.exception;
+package com.project.MALocacao.exceptions;
 
 public class ProdutoJaExisteException extends RuntimeException {
     public ProdutoJaExisteException(String nome) {

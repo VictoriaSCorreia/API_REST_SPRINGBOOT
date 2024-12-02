@@ -1,12 +1,13 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.dtos.ProdutoDto;
-import com.project.MALocacao.exception.AlteracaoDeEstoqueInvalidaException;
-import com.project.MALocacao.exception.EntradasAssociadasException;
-import com.project.MALocacao.exception.ProdutoJaExisteException;
-import com.project.MALocacao.exception.ProdutoNaoEncontradoException;
-import com.project.MALocacao.exception.QuantidadeProdutoInvalidaException;
-import com.project.MALocacao.exception.ValorInvalidoException;
+import com.project.MALocacao.exceptions.AlteracaoDeEstoqueInvalidaException;
+import com.project.MALocacao.exceptions.EntradasAssociadasException;
+import com.project.MALocacao.exceptions.ProdutoJaExisteException;
+import com.project.MALocacao.exceptions.ProdutoNaoEncontradoException;
+import com.project.MALocacao.exceptions.QuantidadeProdutoInvalidaException;
+import com.project.MALocacao.exceptions.SaidasAssociadasException;
+import com.project.MALocacao.exceptions.ValorInvalidoException;
 import com.project.MALocacao.models.ProdutoModel;
 import com.project.MALocacao.repositories.ProdutoRepository;
 
@@ -30,27 +31,39 @@ public class ProdutoService {
     }
 
     @Transactional
-    public ProdutoModel save(ProdutoModel produtoModel) {
+    public ProdutoModel create(ProdutoModel produtoModel) {
         // Confere se o produto já existe pelo nome(unique)
         validarProdutoExisteByNome(produtoModel.getNome());
         // Confere se a quantidade dada de estoque é positiva
         validarQuantidade(produtoModel.getQuantidadeEmEstoque());
         // Confere se o valor é maior que 0
-        validarValor(produtoModel);
+        validarValor(produtoModel.getValorUnidade());
 
         // Método já embutido no JPA
         return produtoRepository.save(produtoModel);
     }
 
+     @Transactional
+    public ProdutoModel save(ProdutoModel produtoModel) {
+        // Confere se a quantidade dada de estoque é positiva
+        validarQuantidade(produtoModel.getQuantidadeEmEstoque());
+        // Método já embutido no JPA
+        return produtoRepository.save(produtoModel);
+    } 
+
     public ProdutoModel update(ProdutoModel produtoModel, Optional<ProdutoModel> produtoModelOptional, ProdutoDto produtoDto) {
-        validarProdutoExiste(produtoModel.getId());
         // valida se já há outro produto com esse nome, que não seja esse mesmo
         validarAlteracaoDeNome(produtoDto, produtoModel);
-        validarAlteracaoDeEstoque(produtoDto, produtoModel);
-        validarValor(produtoModel);
+        validarValor(produtoDto.getValorUnidade());
 
+        /* validarAlteracaoDeEstoque(produtoDto, produtoModel); */
+
+        Long estoque = produtoModel.getQuantidadeEmEstoque();
         // Pega as informações do DTO que veio no corpo da requisição e altera o ProdutoModel
         BeanUtils.copyProperties(produtoDto, produtoModel);
+
+        // Mantém a quantidade em estoque anterior pois só ela pode ser alterada pela entrada e saída
+        produtoModel.setQuantidadeEmEstoque(estoque);
         // Precisa setar o ID manualmente pois o DTO não possui esse campo(ele é gerado automaticamente no Model)
         produtoModel.setId(produtoModelOptional.get().getId());
 
@@ -101,8 +114,8 @@ public class ProdutoService {
             throw new QuantidadeProdutoInvalidaException();
         }
     }  
-    public void validarValor(ProdutoModel produto) {
-        if (produto.getValorUnidade().compareTo(BigDecimal.ZERO) <= 0){
+    public void validarValor(BigDecimal valor) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0){
             throw new ValorInvalidoException();
         }
     } 
@@ -111,16 +124,21 @@ public class ProdutoService {
             throw new EntradasAssociadasException();
         }
     }
-    
+    public void validarSaidasAssociadas(SaidaService saidaService, Long id){
+        if (saidaService.existsByProdutoId(id)){
+            throw new SaidasAssociadasException();
+        }
+    }
+
     public void validarAlteracaoDeNome(ProdutoDto produtoDto, ProdutoModel produtoModel) {
         if (existsByNome(produtoDto.getNome()) && !produtoModel.getNome().equals(produtoDto.getNome())) {
             throw new ProdutoJaExisteException(produtoDto.getNome());
         }
     }
-    public void validarAlteracaoDeEstoque(ProdutoDto produtoDto, ProdutoModel produtoModel) {
+    /* public void validarAlteracaoDeEstoque(ProdutoDto produtoDto, ProdutoModel produtoModel) {
         if (produtoDto.getQuantidadeEmEstoque() != produtoModel.getQuantidadeEmEstoque()) {
             throw new AlteracaoDeEstoqueInvalidaException();
         }
-    }
+    } */
 }
 

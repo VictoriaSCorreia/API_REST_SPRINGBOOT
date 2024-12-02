@@ -1,4 +1,4 @@
-package com.project.MALocacao.exception;
+package com.project.MALocacao.exceptions;
 
 public class SaidaNaoEncontradaException extends RuntimeException {
     public SaidaNaoEncontradaException(Long saidaId) {
