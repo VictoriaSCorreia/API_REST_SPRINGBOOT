@@ -57,9 +57,9 @@ public class EntradaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteEntrada(@PathVariable Long id) {
-        entradaService.validarEntradaExiste(id);
-        entradaService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Entrada deletada.");
+        /* entradaService.validarEntradaExiste(id);
+        entradaService.deleteById(id); */
+        return ResponseEntity.status(HttpStatus.OK).body("Entrada não pode ser deletada, pois está associada a um produto.");
     }
 
     @PutMapping("/{id}")

@@ -52,9 +52,9 @@ public class SaidaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSaida(@PathVariable(value = "id") Long id){
-        saidaService.validarSaidaExiste(id);
-        saidaService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Saida deletada.");  
+        /* saidaService.validarSaidaExiste(id);
+        saidaService.deleteById(id); */
+        return ResponseEntity.status(HttpStatus.OK).body("Saida não pode ser deletada, pois está associada a um produto.");  
         
     }
     @PutMapping("/{id}")

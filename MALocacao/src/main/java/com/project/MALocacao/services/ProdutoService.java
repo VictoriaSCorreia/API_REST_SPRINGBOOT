@@ -1,7 +1,6 @@
 package com.project.MALocacao.services;
 
 import com.project.MALocacao.dtos.ProdutoDto;
-import com.project.MALocacao.exceptions.AlteracaoDeEstoqueInvalidaException;
 import com.project.MALocacao.exceptions.EntradasAssociadasException;
 import com.project.MALocacao.exceptions.ProdutoJaExisteException;
 import com.project.MALocacao.exceptions.ProdutoNaoEncontradoException;

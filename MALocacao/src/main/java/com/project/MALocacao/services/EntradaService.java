@@ -134,8 +134,7 @@ public class EntradaService {
         if (estoque + (novaQuantidade - quantidadeAnterior) < 0){
             throw new QuantidadeInvalidaException();
         }
-    }  
-
+    }
     // retorna o id do produto e as entradas relacionadas a ele
     public ProdutoEntradas getProdutoEntradas(Long produtoId) {
         var entradas = entradaRepository.getEntradasByProdutoId(produtoId);
