@@ -1,0 +1,1 @@
+### Aplicando as regras de negócio da empresa MA Locação de Máquinas e Equipamentos em um CRUD. Utilização do framework Spring para contribuir com uma API Rest com correto tratamento de erros e bons padrões de projeto.
