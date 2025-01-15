@@ -9,29 +9,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "SAIDA")
+@Table(name = "DISPATCH")
 public class DispatchModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column()
-    private LocalDateTime data;
+    private LocalDateTime date;
 
     @Column()
-    private Long quantidade;
+    private Long quantity;
 
     @Column(scale = 2)
-    private BigDecimal valorTotal;
+    private BigDecimal totalValue;
 
     @Column(length = 50)
-    private String solicitante;
+    private String requester;
 
     @Column(length = 50)
-    private String requisicao;
+    private String request;
 
     @Column(length = 50)
-    private String locacao;
+    private String location;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
@@ -44,46 +44,46 @@ public class DispatchModel implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getDate() {
+        return date;
     }
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Long getQuantity() {
-        return quantidade;
+        return quantity;
     }
-    public void setQuantidade(Long quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
     }
 
-    public String getSolicitante() {
-        return solicitante;
+    public BigDecimal getTotalValue() {
+        return totalValue;
     }
-    public void setSolicitante(String solicitante) {
-        this.solicitante = solicitante;
-    }
-
-    public String getRequisicao() {
-        return requisicao;
-    }
-    public void setRequisicao(String requisicao) {
-        this.requisicao = requisicao;
+    public void setTotalValue(BigDecimal totalValue) {
+        this.totalValue = totalValue;
     }
 
-    public String getLocacao() {
-        return locacao;
+    public String getRequester() {
+        return requester;
     }
-    public void setLocacao(String locacao) {
-        this.locacao = locacao;
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public ProductModel getProduct() {

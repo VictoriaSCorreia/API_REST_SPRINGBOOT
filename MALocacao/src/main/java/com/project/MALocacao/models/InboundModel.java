@@ -15,16 +15,16 @@ public class InboundModel implements Serializable {
     private Long id;
 
     @Column()
-    private LocalDateTime data;
+    private LocalDateTime date;
 
     @Column()
-    private Long quantidade;
+    private Long quantity;
 
     @Column(scale = 2)
-    private BigDecimal valorTotal;
+    private BigDecimal totalValue;
 
     @Column(length = 30)
-    private String notaFiscal;
+    private String invoice;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
@@ -37,36 +37,36 @@ public class InboundModel implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getDate() {
+        return date;
     }
 
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Long getQuantity() {
-        return quantidade;
+        return quantity;
     }
 
-    public void setQuantidade(Long quantidade) {
-        this.quantidade = quantidade;
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
     }
 
-    public BigDecimal getValorTotal() {
-        return valorTotal;
+    public BigDecimal getTotalValue() {
+        return totalValue;
     }
 
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setTotalValue(BigDecimal totalValue) {
+        this.totalValue = totalValue;
     }
 
-    public String getNotaFiscal() {
-        return notaFiscal;
+    public String getInvoice() {
+        return invoice;
     }
 
-    public void setNotaFiscal(String notaFiscal) {
-        this.notaFiscal = notaFiscal;
+    public void setInvoice(String invoice) {
+        this.invoice = invoice;
     }
 
     public ProductModel getProduct() {

@@ -4,7 +4,7 @@ import com.project.MALocacao.controllers.ProductInbounds;
 import com.project.MALocacao.dtos.InboundDto;
 import com.project.MALocacao.exceptions.InboundNotFoundException;
 import com.project.MALocacao.exceptions.ProductNotFoundException;
-import com.project.MALocacao.exceptions.QuantidadeInvalidaException;
+import com.project.MALocacao.exceptions.InvalidQuantityException;
 import com.project.MALocacao.models.InboundModel;
 import com.project.MALocacao.models.ProductModel;
 import com.project.MALocacao.repositories.InboundRepository;
@@ -33,8 +33,8 @@ public class InboundService {
     public InboundModel save(InboundModel inboundModel) {
         /* Pega a (quantidade de unidades) que foi dada no corpo da Inbound e
         multiplica pelo (valor unitário) do (Product) associado para setar o
-        (valorTotal) */
-        inboundModel.setValorTotal(BigDecimal.valueOf(inboundModel.getQuantity()).multiply(inboundModel.getProduct().getValorUnidade()));
+        (totalValue) */
+        inboundModel.setTotalValue(BigDecimal.valueOf(inboundModel.getQuantity()).multiply(inboundModel.getProduct().getUnitValue()));
         // Método já embutido no JPA
         return inboundRepository.save(inboundModel);
     }
@@ -48,8 +48,8 @@ public class InboundService {
         /* Confere se o valor da quantidade é positivo */
         validateQuantity(inboundModel.getQuantity());
 
-        // Altera o estoque no product adicionando a quantidade vinda na Saída
-        product.setQuantidadeEmEstoque(product.getStockCount() + inboundModel.getQuantity());
+        // Altera o stock no product adicionando a quantidade vinda na Saída
+        product.setStockCount(product.getStockCount() + inboundModel.getQuantity());
 
         // Salva as alterações feitas no Product
         productService.save(product);
@@ -68,24 +68,24 @@ public class InboundService {
         ProductModel product = inbound.getProduct();
 
         // Pega a quantidade anterior vinda na Inbound e a nova
-        Long quantidadeAnterior = inbound.getQuantity();
-        Long novaQuantidade = inboundDto.getQuantity();
+        Long previousQuantity = inbound.getQuantity();
+        Long newQuantity = inboundDto.getQuantity();
 
         /* Valida se alteração da quantidade de uma Inbound menos(-) as quantidades retiradas nas Saídas 
-        já existentes resultarão num estoque negativo */
-        validateQuantityUpdate(novaQuantidade, quantidadeAnterior, product.getStockCount());
+        já existentes resultarão num stock negativo */
+        validateQuantityUpdate(newQuantity, previousQuantity, product.getStockCount());
 
-        // Subtrai ou adiciona (estoque) em Product dependendo da alteração feita em (quantidade) na Inbound
-        if (novaQuantidade > quantidadeAnterior) {
-            product.setQuantidadeEmEstoque(product.getStockCount() + (novaQuantidade - quantidadeAnterior));
-        } else if (novaQuantidade < quantidadeAnterior) {
-            product.setQuantidadeEmEstoque(product.getStockCount() - (quantidadeAnterior - novaQuantidade));
+        // Subtrai ou adiciona (stock) em Product dependendo da alteração feita em (quantidade) na Inbound
+        if (newQuantity > previousQuantity) {
+            product.setStockCount(product.getStockCount() + (newQuantity - previousQuantity));
+        } else if (newQuantity < previousQuantity) {
+            product.setStockCount(product.getStockCount() - (previousQuantity - newQuantity));
         }
 
         // Pega as informações do DTO que veio no corpo da requisição e altera a InboundModel 
-        inbound.setQuantidade(novaQuantidade);
-        inbound.setData(inboundDto.getData());
-        inbound.setNotaFiscal(inboundDto.getNotaFiscal());
+        inbound.setQuantity(newQuantity);
+        inbound.setDate(inboundDto.getDate());
+        inbound.setInvoice(inboundDto.getInvoice());
 
         productService.save(product);
         return save(inbound);
@@ -127,12 +127,12 @@ public class InboundService {
 
     public void validateQuantity(Long quantidade) {
         if (quantidade <= 0) {
-            throw new QuantidadeInvalidaException();
+            throw new InvalidQuantityException();
         }
     }
-    public void validateQuantityUpdate(Long novaQuantidade, Long quantidadeAnterior, Long estoque){
-        if (estoque + (novaQuantidade - quantidadeAnterior) < 0){
-            throw new QuantidadeInvalidaException();
+    public void validateQuantityUpdate(Long newQuantity, Long previousQuantity, Long stock){
+        if (stock + (newQuantity - previousQuantity) < 0){
+            throw new InvalidQuantityException();
         }
     }
     // retorna o id do product e as inbounds relacionadas a ele

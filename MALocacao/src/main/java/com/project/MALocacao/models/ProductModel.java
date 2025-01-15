@@ -13,22 +13,22 @@ public class ProductModel implements Serializable {
     private Long id;
 
     @Column(unique = true, length = 100)
-    private String nome;
+    private String name;
 
     @Column(length = 50)
-    private String setor;
+    private String sector;
 
     @Column(scale = 2)
-    private BigDecimal valorUnidade;
+    private BigDecimal unitValue;
 
     @Column()
-    private Long quantidadeEmEstoque;
+    private Long stockCount;
 
     @Column(length = 50)
-    private String aplicacao;
+    private String aplication;
 
     @Column(length = 30)
-    private String fornecedor;
+    private String supplier;
 
     public Long getId() {
         return id;
@@ -37,46 +37,46 @@ public class ProductModel implements Serializable {
         this.id = id;
     }
     
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSetor() {
-        return setor;
-    }
-    public void setSetor(String setor) {
-        this.setor = setor;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public BigDecimal getValorUnidade() {
-        return valorUnidade;
+    public String getSector() {
+        return sector;
     }
-    public void setValorUnidade(BigDecimal valorUnidade) {
-        this.valorUnidade = valorUnidade;
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
+
+    public BigDecimal getUnitValue() {
+        return unitValue;
+    }
+    public void setUnitValue(BigDecimal unitValue) {
+        this.unitValue = unitValue;
     }
 
     public Long getStockCount() {
-        return quantidadeEmEstoque;
+        return stockCount;
     }
-    public void setQuantidadeEmEstoque(Long quantidadeEmEstoque) {
-        this.quantidadeEmEstoque = quantidadeEmEstoque;
-    }
-
-    public String getAplicacao() {
-        return aplicacao;
-    }
-    public void setAplicacao(String aplicacao) {
-        this.aplicacao = aplicacao;
+    public void setStockCount(Long stockCount) {
+        this.stockCount = stockCount;
     }
 
-    public String getFornecedor() {
-        return fornecedor;
+    public String getAplication() {
+        return aplication;
     }
-    public void setFornecedor(String fornecedor) {
-        this.fornecedor = fornecedor;
+    public void setAplication(String aplication) {
+        this.aplication = aplication;
+    }
+
+    public String getSupplier() {
+        return supplier;
+    }
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
     }
 }
 

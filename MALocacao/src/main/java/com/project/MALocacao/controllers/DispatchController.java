@@ -55,7 +55,7 @@ public class DispatchController {
         dispatchService.validateDispatchExists(id);
         /*
         dispatchService.deleteById(id); */
-        return ResponseEntity.status(HttpStatus.OK).body("Dispatch não pode ser deletada, pois está associada a um product.");  
+        return ResponseEntity.status(HttpStatus.OK).body("Saída não pode ser deletada, pois está associada a um produto.");  
         
     }
     @PutMapping("/{id}")

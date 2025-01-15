@@ -4,7 +4,7 @@ import com.project.MALocacao.models.DispatchModel;
 import com.project.MALocacao.controllers.ProductDispatches;
 import com.project.MALocacao.dtos.DispatchDto;
 import com.project.MALocacao.exceptions.ProductNotFoundException;
-import com.project.MALocacao.exceptions.QuantidadeInvalidaException;
+import com.project.MALocacao.exceptions.InvalidQuantityException;
 import com.project.MALocacao.exceptions.DispatchNotFoundException;
 import com.project.MALocacao.models.ProductModel;
 import com.project.MALocacao.repositories.DispatchRepository;
@@ -31,9 +31,9 @@ public class DispatchService {
 
     @Transactional
     public DispatchModel save(DispatchModel dispatchModel) {
-        /*  Pega a (quantidade de unidades) que foi dada no corpo da Saída e 
-        multiplica pelo (valor unitário) do (Product) associado para setar o (valorTotal) */
-        dispatchModel.setValorTotal(BigDecimal.valueOf(dispatchModel.getQuantity()).multiply(dispatchModel.getProduct().getValorUnidade()));
+        /*  Pega a (quantity de unidades) que foi dada no corpo da Saída e 
+        multiplica pelo (valor unitário) do (Product) associado para setar o (totalValue) */
+        dispatchModel.setTotalValue(BigDecimal.valueOf(dispatchModel.getQuantity()).multiply(dispatchModel.getProduct().getUnitValue()));
         // Método já embutido no JPA
         return dispatchRepository.save(dispatchModel);
     }
@@ -44,11 +44,11 @@ public class DispatchService {
         ProductModel product = productService.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        // Confere se o valor da quantidade é positivo ou menor que o estoque
-        validarQuantidadeCreate(dispatchModel.getQuantity(), product.getStockCount());
+        // Confere se o valor da quantity é positivo ou menor que o stock
+        validateCreateQuantity(dispatchModel.getQuantity(), product.getStockCount());
 
-        // Altera o estoque no product subtraindo pela quantidade vinda na Saída
-        product.setQuantidadeEmEstoque(product.getStockCount() - dispatchModel.getQuantity());
+        // Altera o stock no product subtraindo pela quantity vinda na Saída
+        product.setStockCount(product.getStockCount() - dispatchModel.getQuantity());
 
         // Salva as alterações feitas no Product
         productService.save(product);
@@ -67,24 +67,24 @@ public class DispatchService {
         var dispatch = dispatchModelOptional.get();
 
         // Pega as informações do DTO que veio no corpo da requisição e altera a DispatchModel 
-        dispatch.setData(dispatchDto.getData());
-        dispatch.setSolicitante(dispatchDto.getSolicitante());
-        dispatch.setRequisicao(dispatchDto.getRequisicao());
-        dispatch.setLocacao(dispatchDto.getLocacao());
+        dispatch.setDate(dispatchDto.getDate());
+        dispatch.setRequester(dispatchDto.getRequester());
+        dispatch.setRequest(dispatchDto.getRequest());
+        dispatch.setLocation(dispatchDto.getLocation());
 
         ProductModel product = dispatch.getProduct();
 
-        // Pega a quantidade anterior vinda na Dispatch e a nova
-        Long quantidadeAnterior = dispatch.getQuantity();
-        Long novaQuantidade = dispatchDto.getQuantity();
+        // Pega a quantity anterior vinda na Dispatch e a nova
+        Long previousQuantity = dispatch.getQuantity();
+        Long newQuantity = dispatchDto.getQuantity();
 
-        dispatch.setQuantidade(novaQuantidade);
+        dispatch.setQuantity(newQuantity);
 
-        // Subtrai ou adiciona (unidades) em Product dependendo da alteração feita em (quantidade) na Dispatch
-        if (novaQuantidade > quantidadeAnterior) {
-            product.setQuantidadeEmEstoque(product.getStockCount() - (novaQuantidade - quantidadeAnterior));
-        } else if (novaQuantidade < quantidadeAnterior) {
-            product.setQuantidadeEmEstoque(product.getStockCount() + (quantidadeAnterior - novaQuantidade));
+        // Subtrai ou adiciona (unidades) em Product dependendo da alteração feita em (quantity) na Dispatch
+        if (newQuantity > previousQuantity) {
+            product.setStockCount(product.getStockCount() - (newQuantity - previousQuantity));
+        } else if (newQuantity < previousQuantity) {
+            product.setStockCount(product.getStockCount() + (previousQuantity - newQuantity));
         }
         productService.save(product);
         return save(dispatch);
@@ -119,14 +119,14 @@ public class DispatchService {
         return dispatchRepository.existsByProductId(productId);
     }
 
-    public void validarQuantidadeCreate(Long quantidade, Long estoque) {
-        if (quantidade > estoque || quantidade <= 0) {
-            throw new QuantidadeInvalidaException();
+    public void validateCreateQuantity(Long quantity, Long stock) {
+        if (quantity > stock || quantity <= 0) {
+            throw new InvalidQuantityException();
         }
     }
-    public void validateQuantityUpdate(Long quantidadeAnterior, Long quantidadeAtual, Long estoque) {
-        if (quantidadeAtual > (estoque + quantidadeAnterior) || quantidadeAtual <= 0) {
-            throw new QuantidadeInvalidaException();
+    public void validateQuantityUpdate(Long previousQuantity, Long currentQuantity, Long stock) {
+        if (currentQuantity > (stock + previousQuantity) || currentQuantity <= 0) {
+            throw new InvalidQuantityException();
         }
     }
 
