@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "PRODUTO")
-public class ProdutoModel implements Serializable {
+@Table(name = "PRODUCT")
+public class ProductModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -58,7 +58,7 @@ public class ProdutoModel implements Serializable {
         this.valorUnidade = valorUnidade;
     }
 
-    public Long getQuantidadeEmEstoque() {
+    public Long getStockCount() {
         return quantidadeEmEstoque;
     }
     public void setQuantidadeEmEstoque(Long quantidadeEmEstoque) {

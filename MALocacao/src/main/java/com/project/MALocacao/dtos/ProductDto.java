@@ -3,7 +3,7 @@ package com.project.MALocacao.dtos;
 import java.math.BigDecimal;
 import jakarta.validation.constraints.NotNull;
 
-public class ProdutoDto {
+public class ProductDto {
 
     @NotNull(message = "Necessário inserir nome corretamente")
     private String nome;
@@ -41,7 +41,7 @@ public class ProdutoDto {
         this.valorUnidade = valorUnidade;
     }
 
-    public Long getQuantidadeEmEstoque() {
+    public Long getStockCount() {
         return quantidadeEmEstoque;
     }
     public void setQuantidadeEmEstoque(Long quantidadeEmEstoque) {

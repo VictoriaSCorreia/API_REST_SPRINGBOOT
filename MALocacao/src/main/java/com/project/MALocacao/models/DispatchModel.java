@@ -1,32 +1,48 @@
-package com.project.MALocacao.dtos;
+package com.project.MALocacao.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.MALocacao.models.ProdutoModel;
 
-public class SaidaDto {
-    @NotNull(message = "Necessário inserir data corretamente")
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "SAIDA")
+public class DispatchModel implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column()
     private LocalDateTime data;
 
-    @NotNull(message = "Necessário inserir quantidade corretamente")
+    @Column()
     private Long quantidade;
-    
-    @JsonIgnore
+
+    @Column(scale = 2)
     private BigDecimal valorTotal;
 
-    @NotNull(message = "Necessário inserir solicitante corretamente")
+    @Column(length = 50)
     private String solicitante;
 
+    @Column(length = 50)
     private String requisicao;
 
+    @Column(length = 50)
     private String locacao;
 
-    @JsonIgnore
-    private ProdutoModel produto;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id")
+    @JsonIgnore private ProductModel product;
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LocalDateTime getData() {
         return data;
@@ -35,7 +51,7 @@ public class SaidaDto {
         this.data = data;
     }
 
-    public Long getQuantidade() {
+    public Long getQuantity() {
         return quantidade;
     }
     public void setQuantidade(Long quantidade) {
@@ -56,13 +72,6 @@ public class SaidaDto {
         this.solicitante = solicitante;
     }
 
-    public String getLocacao() {
-        return locacao;
-    }
-    public void setLocacao(String locacao) {
-        this.locacao = locacao;
-    }
-
     public String getRequisicao() {
         return requisicao;
     }
@@ -70,11 +79,18 @@ public class SaidaDto {
         this.requisicao = requisicao;
     }
 
-    public ProdutoModel getProduto() {
-        return produto;
+    public String getLocacao() {
+        return locacao;
     }
-    public void setProduto(ProdutoModel produto) {
-        this.produto = produto;
+    public void setLocacao(String locacao) {
+        this.locacao = locacao;
+    }
+
+    public ProductModel getProduct() {
+        return product;
+    }
+    public void setProduct(ProductModel product) {
+        this.product = product;
     }
 }
 

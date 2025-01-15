@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ENTRADA")
-public class EntradaModel implements Serializable {
+@Table(name = "INBOUND")
+public class InboundModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -27,8 +27,8 @@ public class EntradaModel implements Serializable {
     private String notaFiscal;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "produto_id")
-    @JsonIgnore private ProdutoModel produto;
+    @JoinColumn(name = "product_id")
+    @JsonIgnore private ProductModel product;
 
     public Long getId() {
         return id;
@@ -45,7 +45,7 @@ public class EntradaModel implements Serializable {
         this.data = data;
     }
 
-    public Long getQuantidade() {
+    public Long getQuantity() {
         return quantidade;
     }
 
@@ -69,12 +69,12 @@ public class EntradaModel implements Serializable {
         this.notaFiscal = notaFiscal;
     }
 
-    public ProdutoModel getProduto() {
-        return produto;
+    public ProductModel getProduct() {
+        return product;
     }
 
-    public void setProduto(ProdutoModel produto) {
-        this.produto = produto;
+    public void setProduct(ProductModel product) {
+        this.product = product;
     } 
 }
 

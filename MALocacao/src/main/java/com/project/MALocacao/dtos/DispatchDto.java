@@ -1,48 +1,32 @@
-package com.project.MALocacao.models;
+package com.project.MALocacao.dtos;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.MALocacao.models.ProductModel;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "SAIDA")
-public class SaidaModel implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column()
+public class DispatchDto {
+    @NotNull(message = "Necessário inserir data corretamente")
     private LocalDateTime data;
 
-    @Column()
+    @NotNull(message = "Necessário inserir quantidade corretamente")
     private Long quantidade;
-
-    @Column(scale = 2)
+    
+    @JsonIgnore
     private BigDecimal valorTotal;
 
-    @Column(length = 50)
+    @NotNull(message = "Necessário inserir solicitante corretamente")
     private String solicitante;
 
-    @Column(length = 50)
     private String requisicao;
 
-    @Column(length = 50)
     private String locacao;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "produto_id")
-    @JsonIgnore private ProdutoModel produto;
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @JsonIgnore
+    private ProductModel product;
 
     public LocalDateTime getData() {
         return data;
@@ -51,7 +35,7 @@ public class SaidaModel implements Serializable {
         this.data = data;
     }
 
-    public Long getQuantidade() {
+    public Long getQuantity() {
         return quantidade;
     }
     public void setQuantidade(Long quantidade) {
@@ -72,13 +56,6 @@ public class SaidaModel implements Serializable {
         this.solicitante = solicitante;
     }
 
-    public String getRequisicao() {
-        return requisicao;
-    }
-    public void setRequisicao(String requisicao) {
-        this.requisicao = requisicao;
-    }
-
     public String getLocacao() {
         return locacao;
     }
@@ -86,11 +63,18 @@ public class SaidaModel implements Serializable {
         this.locacao = locacao;
     }
 
-    public ProdutoModel getProduto() {
-        return produto;
+    public String getRequisicao() {
+        return requisicao;
     }
-    public void setProduto(ProdutoModel produto) {
-        this.produto = produto;
+    public void setRequisicao(String requisicao) {
+        this.requisicao = requisicao;
+    }
+
+    public ProductModel getProduct() {
+        return product;
+    }
+    public void setProduct(ProductModel product) {
+        this.product = product;
     }
 }
 

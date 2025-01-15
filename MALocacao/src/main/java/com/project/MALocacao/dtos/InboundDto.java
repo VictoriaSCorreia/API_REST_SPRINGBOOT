@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.MALocacao.models.ProdutoModel;
+import com.project.MALocacao.models.ProductModel;
 
-public class EntradaDto {
+public class InboundDto {
     @NotNull(message = "Necessário inserir data corretamente")
     private LocalDateTime data = LocalDateTime.now();
 
@@ -21,7 +21,7 @@ public class EntradaDto {
     private String notaFiscal;
 
     @JsonIgnore
-    private ProdutoModel produto;
+    private ProductModel product;
 
     public LocalDateTime getData() {
         return data;
@@ -30,7 +30,7 @@ public class EntradaDto {
         this.data = data;
     }
 
-    public Long getQuantidade() {
+    public Long getQuantity() {
         return quantidade;
     }
     public void setQuantidade(Long quantidade) {
@@ -51,11 +51,11 @@ public class EntradaDto {
         this.notaFiscal = notaFiscal;
     }
 
-    public ProdutoModel getProduto() {
-        return produto;
+    public ProductModel getProduct() {
+        return product;
     }
-    public void setProduto(ProdutoModel produto) {
-        this.produto = produto;
+    public void setProduct(ProductModel product) {
+        this.product = product;
     }
 
 }
