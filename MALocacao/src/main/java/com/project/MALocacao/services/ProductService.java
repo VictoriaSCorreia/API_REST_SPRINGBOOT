@@ -34,7 +34,7 @@ public class ProductService {
         // Confere se o product já existe pelo nome(unique)
         validarProductExisteByNome(productModel.getNome());
         // Confere se a quantidade dada de estoque é positiva
-        validarQuantidade(productModel.getStockCount());
+        validateQuantity(productModel.getStockCount());
         // Confere se o valor é maior que 0
         validarValor(productModel.getValorUnidade());
 
@@ -45,7 +45,7 @@ public class ProductService {
      @Transactional
     public ProductModel save(ProductModel productModel) {
         // Confere se a quantidade dada de estoque é positiva
-        validarQuantidade(productModel.getStockCount());
+        validateQuantity(productModel.getStockCount());
         // Método já embutido no JPA
         return productRepository.save(productModel);
     } 
@@ -98,7 +98,7 @@ public class ProductService {
     }
 
 
-    public void validarProductExiste(Long productId) {
+    public void validateProductExists(Long productId) {
         if (!existsById(productId)) {
             throw new ProductNotFoundException(productId);
         }
@@ -108,7 +108,7 @@ public class ProductService {
             throw new ProductJaExisteException(nome);
         }
     }
-    public void validarQuantidade(Long quantidade) {
+    public void validateQuantity(Long quantidade) {
         if (quantidade < 0) {
             throw new QuantidadeProductInvalidaException();
         }
@@ -118,12 +118,12 @@ public class ProductService {
             throw new ValorInvalidoException();
         }
     } 
-    public void validarInboundsAssociadas(InboundService inboundService, Long id){
+    public void validateRelatedInbounds(InboundService inboundService, Long id){
         if (inboundService.existsByProductId(id)){
             throw new InboundsAssociadasException();
         }
     }
-    public void validarDispatchesAssociadas(DispatchService dispatchService, Long id){
+    public void validateRelatedDispatches(DispatchService dispatchService, Long id){
         if (dispatchService.existsByProductId(id)){
             throw new DispatchesAssociadasException();
         }

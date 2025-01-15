@@ -9,46 +9,46 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.MALocacao.models.ProductModel;
 
 public class InboundDto {
-    @NotNull(message = "Necessário inserir data corretamente")
-    private LocalDateTime data = LocalDateTime.now();
+    @NotNull(message = "Necessário inserir date corretamente")
+    private LocalDateTime date = LocalDateTime.now();
 
-    @NotNull(message = "Necessário inserir quantidade corretamente")
-    private Long quantidade;
+    @NotNull(message = "Necessário inserir quantity corretamente")
+    private Long quantity;
     
     @JsonIgnore
-    private BigDecimal valorTotal;
+    private BigDecimal totalValue;
 
-    private String notaFiscal;
+    private String invoice;
 
     @JsonIgnore
     private ProductModel product;
 
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getDate() {
+        return date;
     }
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Long getQuantity() {
-        return quantidade;
+        return quantity;
     }
-    public void setQuantidade(Long quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
     }
 
-    public String getNotaFiscal() {
-        return notaFiscal;
+    public BigDecimal getTotalValue() {
+        return totalValue;
     }
-    public void setNotaFiscal(String notaFiscal) {
-        this.notaFiscal = notaFiscal;
+    public void setTotalValue(BigDecimal totalValue) {
+        this.totalValue = totalValue;
+    }
+
+    public String getInvoice() {
+        return invoice;
+    }
+    public void setInvoice(String invoice) {
+        this.invoice = invoice;
     }
 
     public ProductModel getProduct() {

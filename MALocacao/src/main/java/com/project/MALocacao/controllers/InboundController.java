@@ -57,7 +57,7 @@ public class InboundController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteInbound(@PathVariable Long id) {
-        inboundService.validarInboundExiste(id);
+        inboundService.validateInboundExists(id);
         /* 
         inboundService.deleteById(id); */
         return ResponseEntity.status(HttpStatus.OK).body("Inbound não pode ser deletada, pois está associada a um product.");
@@ -66,8 +66,8 @@ public class InboundController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateInbound(@PathVariable(value = "id") Long id,
             @RequestBody @Valid InboundDto inboundDto) {
-        inboundService.validarInboundExiste(id);
-        inboundService.validarQuantidade(inboundDto.getQuantity());
+        inboundService.validateInboundExists(id);
+        inboundService.validateQuantity(inboundDto.getQuantity());
         return ResponseEntity.status(HttpStatus.OK).body(inboundService.updateInbound(id, inboundDto));
     }
 }

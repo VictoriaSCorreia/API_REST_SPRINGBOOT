@@ -5,61 +5,61 @@ import jakarta.validation.constraints.NotNull;
 
 public class ProductDto {
 
-    @NotNull(message = "Necessário inserir nome corretamente")
-    private String nome;
+    @NotNull(message = "Necessário inserir name corretamente")
+    private String name;
 
-    private String setor;
+    private String sector;
 
     @NotNull(message = "Necessário inserir valor corretamente")
-    private BigDecimal valorUnidade;
+    private BigDecimal unitValue;
 
     @NotNull(message = "Necessário inserir número de unidades corretamente")
-    private Long quantidadeEmEstoque; //  = 0L
+    private Long stockCount; //  = 0L
 
-    private String aplicacao;
+    private String aplication;
 
-    private String fornecedor;
+    private String supplier;
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSetor() {
-        return setor;
-    }
-    public void setSetor(String setor) {
-        this.setor = setor;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public BigDecimal getValorUnidade() {
-        return valorUnidade;
+    public String getSector() {
+        return sector;
     }
-    public void setValorUnidade(BigDecimal valorUnidade) {
-        this.valorUnidade = valorUnidade;
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
+
+    public BigDecimal getUnitValue() {
+        return unitValue;
+    }
+    public void setUnitValue(BigDecimal unitValue) {
+        this.unitValue = unitValue;
     }
 
     public Long getStockCount() {
-        return quantidadeEmEstoque;
+        return stockCount;
     }
-    public void setQuantidadeEmEstoque(Long quantidadeEmEstoque) {
-        this.quantidadeEmEstoque = quantidadeEmEstoque;
+    public void setStockCount(Long stockCount) {
+        this.stockCount = stockCount;
     }
 
-    public String getAplicacao() {
-        return aplicacao;
+    public String getAplication() {
+        return aplication;
     }
-    public void setAplicacao(String aplicacao) {
-        this.aplicacao = aplicacao;
+    public void setAplication(String aplication) {
+        this.aplication = aplication;
     }
     
-    public String getFornecedor() {
-        return fornecedor;
+    public String getSupplier() {
+        return supplier;
     }
-    public void setFornecedor(String fornecedor) {
-        this.fornecedor = fornecedor;
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
     }
     
 }

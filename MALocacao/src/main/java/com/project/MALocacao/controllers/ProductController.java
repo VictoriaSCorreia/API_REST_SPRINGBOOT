@@ -56,12 +56,12 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProduct(@PathVariable(value = "id") Long id) {
-        productService.validarProductExiste(id);
+        productService.validateProductExists(id);
         
         // valida se há inbounds associadas a esse product. Caso haja, ele não pode ser excluído
-        productService.validarInboundsAssociadas(inboundService, id);
+        productService.validateRelatedInbounds(inboundService, id);
         // valida se há dispatches associadas pois um product pode ser criado já com algo no estoque, sem inbounds
-        productService.validarDispatchesAssociadas(dispatchService, id);
+        productService.validateRelatedDispatches(dispatchService, id);
 
         productService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Product deletado.");
@@ -70,7 +70,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable(value = "id") Long id,
                                                     @RequestBody @Valid ProductDto productDto){
-        productService.validarProductExiste(id); 
+        productService.validateProductExists(id); 
         Optional<ProductModel> productModelOptional = productService.findById(id);                                              
         var productModel = productModelOptional.get(); 
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.update(productModel, productModelOptional, productDto)); 

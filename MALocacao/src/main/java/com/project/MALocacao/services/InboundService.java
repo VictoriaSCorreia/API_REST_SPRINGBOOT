@@ -46,7 +46,7 @@ public class InboundService {
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         /* Confere se o valor da quantidade é positivo */
-        validarQuantidade(inboundModel.getQuantity());
+        validateQuantity(inboundModel.getQuantity());
 
         // Altera o estoque no product adicionando a quantidade vinda na Saída
         product.setQuantidadeEmEstoque(product.getStockCount() + inboundModel.getQuantity());
@@ -119,13 +119,13 @@ public class InboundService {
         return inboundRepository.existsByProductId(productId);
     }
 
-    public void validarInboundExiste(Long inboundId) {
+    public void validateInboundExists(Long inboundId) {
         if (!existsById(inboundId)) {
             throw new InboundNotFoundException(inboundId);
         }
     }
 
-    public void validarQuantidade(Long quantidade) {
+    public void validateQuantity(Long quantidade) {
         if (quantidade <= 0) {
             throw new QuantidadeInvalidaException();
         }

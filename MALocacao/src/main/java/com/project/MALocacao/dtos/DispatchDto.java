@@ -9,65 +9,65 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.MALocacao.models.ProductModel;
 
 public class DispatchDto {
-    @NotNull(message = "Necessário inserir data corretamente")
-    private LocalDateTime data;
+    @NotNull(message = "Necessário inserir date corretamente")
+    private LocalDateTime date;
 
-    @NotNull(message = "Necessário inserir quantidade corretamente")
-    private Long quantidade;
+    @NotNull(message = "Necessário inserir quantity corretamente")
+    private Long quantity;
     
     @JsonIgnore
-    private BigDecimal valorTotal;
+    private BigDecimal totalValue;
 
-    @NotNull(message = "Necessário inserir solicitante corretamente")
-    private String solicitante;
+    @NotNull(message = "Necessário inserir requester corretamente")
+    private String requester;
 
-    private String requisicao;
+    private String request;
 
-    private String locacao;
+    private String location;
 
     @JsonIgnore
     private ProductModel product;
 
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getDate() {
+        return date;
     }
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Long getQuantity() {
-        return quantidade;
+        return quantity;
     }
-    public void setQuantidade(Long quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
     }
 
-    public String getSolicitante() {
-        return solicitante;
+    public BigDecimal getTotalValue() {
+        return totalValue;
     }
-    public void setSolicitante(String solicitante) {
-        this.solicitante = solicitante;
-    }
-
-    public String getLocacao() {
-        return locacao;
-    }
-    public void setLocacao(String locacao) {
-        this.locacao = locacao;
+    public void setTotalValue(BigDecimal totalValue) {
+        this.totalValue = totalValue;
     }
 
-    public String getRequisicao() {
-        return requisicao;
+    public String getRequester() {
+        return requester;
     }
-    public void setRequisicao(String requisicao) {
-        this.requisicao = requisicao;
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     public ProductModel getProduct() {
