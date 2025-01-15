@@ -56,7 +56,7 @@ public class DispatchService {
         // Finalmente associa ESSE Product à ESSA Saída
         dispatchModel.setProduct(product);
 
-        // Salva a Dispatch
+        // Salva a Saída
         return save(dispatchModel);
     }
 
